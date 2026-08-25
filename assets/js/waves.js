@@ -47,8 +47,9 @@ function makeNoise2D(seed){
   };
 }
 
-(function(){
-  const container = document.getElementById('wavesMount');
+// Builds one independent wave field inside the given mount element. Each field owns
+// its own geometry, cursor state and animation loop, so a page can run several.
+function initWaveField(container){
   if(!container) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -239,7 +240,7 @@ function makeNoise2D(seed){
   window.addEventListener('mousemove', onMouseMove);
   container.addEventListener('touchmove', onTouchMove, { passive:true });
 
-  // Stop burning frames on a field nobody can see once the hero scrolls away.
+  // Stop burning frames on a field nobody can see once it scrolls off screen.
   if('IntersectionObserver' in window){
     new IntersectionObserver(entries=>{
       visible = entries[0].isIntersecting;
@@ -248,4 +249,7 @@ function makeNoise2D(seed){
   }
 
   init();
-})();
+}
+
+// Every [data-waves] element on the page gets its own field.
+document.querySelectorAll('[data-waves]').forEach(initWaveField);

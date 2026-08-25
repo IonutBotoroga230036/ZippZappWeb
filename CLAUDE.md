@@ -11,13 +11,12 @@ ZippZapp — landing page for a **power bank rental network**. Stations are plac
 Static HTML/CSS/JS. **No build step, no framework, no package manager.** Files are served as-is.
 
 ```
-index.html            single page, all sections
+index.html            single page, two audience acts
 assets/css/style.css  all styling, token-driven
-assets/js/waves.js    hero background wave field + makeNoise2D (must load first)
-assets/js/bolt.js     the wave-built logo mark (depends on makeNoise2D from waves.js)
+assets/js/waves.js    initWaveField() + makeNoise2D; binds to every [data-waves]
 assets/js/main.js     FAQ accordion, partner form, mobile nav
 assets/fonts/         NIKEA.woff2 (used) + NIKEA.otf (source)
-assets/img/           logo PNGs
+assets/img/           logo PNGs + pack-black.png / pack-white.png
 versions/             version_1/2/3.html — original prototypes, archived reference only
 tools/serve.ps1       local static server
 ```
@@ -36,16 +35,20 @@ Serves `http://localhost:8080`. `.claude/launch.json` wires this up for the prev
 
 ## Architecture notes
 
-**Two independent wave fields, one shared noise function.** `waves.js` declares `makeNoise2D` at global scope and runs the hero background field (vertical lines, ~150 paths). `bolt.js` reuses that global for the logo mark (horizontal lines, 31 paths, clipped to a bolt silhouette). Script order in `index.html` matters — `waves.js` must come before `bolt.js`.
+**The page is two acts, one per audience.** Act one (`.act--dark`) is the renter story: hero, how it works, the pack, pricing. An act-break band hands over to act two (`.act--light`), the venue-owner story: why host, revenue split, placement, apply form. This exists because the page previously alternated audiences and lost both — a café owner would hit a $9.99 consumer subscription mid-pitch.
 
-Both fields:
-- pause their RAF loop via `IntersectionObserver` when scrolled out of view
-- render exactly one static frame under `prefers-reduced-motion` and never schedule again
-- track the cursor in **viewport** coordinates (never add `scrollY` — that was a bug in the v3 prototype that made the cursor hotspot drift on scroll)
+**Acts flip design tokens; components never hardcode colour.** `.act--dark` and `.act--light` redefine `--surface`, `--on-surface`, `--on-surface-70/50`, `--rule` and `--accent`. Components read *those*, so the same component renders correctly in either act. This is load-bearing, not tidiness: `.steps`, `.section-head`, `.faq-q`, `.eyebrow` and `.stats` all appear in **both** acts. Adding a component that hardcodes `var(--ink)` or `#fff` will break the moment it moves act.
 
-**The mark is the wave.** The real ZippZapp logo is a lightning bolt built from stacked wavy stripes. The hero mark is therefore *drawn live* rather than placed as an image: a `<clipPath>` of the bolt over a field of animated lines. The bolt path is duplicated in `index.html` (once for the clip, once for the `.bolt-fill` wash) — keep the two `d` values in sync.
+`.actbreak` sets its own dark tokens locally so it stays dark regardless of the acts either side of it.
+
+**Wave fields are instantiated per element.** `waves.js` exposes `initWaveField(mount)` and calls it for every `[data-waves]`. There are currently two (hero, act break); adding a third is a markup change only. Each field:
+- pauses its RAF loop via `IntersectionObserver` when scrolled out of view — verified that only the visible one runs
+- renders exactly one static frame under `prefers-reduced-motion` and never schedules again
+- tracks the cursor in **viewport** coordinates (never add `scrollY` — that was a v3 bug that made the cursor hotspot drift on scroll)
 
 **Colour is single-source.** `--volt-rgb` is the one place the brand purple is defined; `--volt` and `--volt-tint` derive from it. Do not write a literal `rgba(183,148,255,…)` anywhere — the v3 prototype had a recolour go stale exactly that way.
+
+**Muted body copy is `--ink-50` at 0.62 alpha, not 0.52.** At 0.52 it measured 3.93:1 on paper and failed WCAG AA. Measure computed colour against the real section background when changing it; do not eyeball.
 
 ## Typography constraint
 
@@ -59,6 +62,7 @@ Everything on the page must be true. The v3 prototype shipped invented traction 
 
 ## Known gaps
 
-- The stations/placement map SVG is decorative; its six pins can still read as a coverage claim.
+- `pack-black.png` / `pack-white.png` are **product renders standing in for real photography**, which is blocked on physical devices being ordered. The slots are fixed-aspect `.product__plate` containers referenced once per act, so swapping them is a file drop, not a layout change. Showing both finishes implies two SKUs exist — worth confirming.
+- There is no photography of a station *in situ*, which is the biggest remaining gap on the venue side.
 - The partner form has no backend and says so on the page.
 - Every "Get the app" CTA anchors to `#download` in the footer — there are no real store links yet.
