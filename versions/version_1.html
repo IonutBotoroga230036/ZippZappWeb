@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZippZapp — Power Bank Rental Network</title>
+<meta name="description" content="ZippZapp puts charge stations in venues across the city — free to install, easy to manage, and one more reason customers stay a little longer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0a0e;
+    --ink-soft:#15131f;
+    --ink-line:rgba(255,255,255,0.10);
+    --paper:#fbfaf9;
+    --paper-dim:#f1eff5;
+    --line:rgba(10,10,14,0.10);
+    --volt:#a78bfa;
+    --volt-deep:#6d4ff2;
+    --volt-dark:#4c2fd1;
+    --volt-light:#e7e1fe;
+    --ink-70:rgba(10,10,14,0.7);
+    --ink-50:rgba(10,10,14,0.52);
+    --paper-70:rgba(251,250,249,0.72);
+    --paper-50:rgba(251,250,249,0.5);
+    --radius:18px;
+    --wrap:1180px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-size:16px;
+    line-height:1.5;
+  }
+  h1,h2,h3,h4{
+    font-family:'Space Grotesk',sans-serif;
+    margin:0;
+    letter-spacing:-0.02em;
+    font-weight:700;
+  }
+  p{margin:0;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  ul{margin:0;padding:0;list-style:none;}
+  button{font-family:inherit;cursor:pointer;}
+
+  ::selection{background:var(--volt-deep);color:#fff;}
+
+  :focus-visible{
+    outline:2px solid var(--volt-deep);
+    outline-offset:3px;
+  }
+
+  .wrap{
+    max-width:var(--wrap);
+    margin:0 auto;
+    padding:0 32px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--volt-deep);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;
+    background:var(--volt-deep);
+    display:inline-block;
+    transform:rotate(45deg);
+    flex:none;
+  }
+  .eyebrow.on-dark{color:var(--volt);}
+  .eyebrow.on-dark::before{background:var(--volt);}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;
+    top:0;left:0;right:0;
+    z-index:100;
+    background:rgba(251,250,249,0.78);
+    backdrop-filter:blur(14px) saturate(1.4);
+    -webkit-backdrop-filter:blur(14px) saturate(1.4);
+    border-bottom:1px solid var(--line);
+    transition:background .3s var(--ease);
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:76px;
+  }
+  .nav__logo img{height:26px;width:auto;}
+  .nav__links{
+    display:flex;
+    align-items:center;
+    gap:36px;
+  }
+  .nav__links a{
+    font-size:14.5px;
+    font-weight:500;
+    color:var(--ink-70);
+    position:relative;
+    padding:4px 0;
+    transition:color .2s;
+  }
+  .nav__links a:hover{color:var(--ink);}
+  .nav__links a::after{
+    content:"";
+    position:absolute;left:0;right:100%;bottom:0;
+    height:2px;background:var(--volt-deep);
+    transition:right .25s var(--ease);
+  }
+  .nav__links a:hover::after{right:0;}
+  .nav__cta{
+    background:var(--ink);
+    color:#fff;
+    padding:11px 22px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+    border:none;
+    transition:transform .25s var(--ease), background .25s;
+    white-space:nowrap;
+  }
+  .nav__cta:hover{background:var(--volt-dark); transform:translateY(-1px);}
+  .nav__burger{display:none;background:none;border:none;padding:8px;}
+  .nav__burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;transition:.25s;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:var(--ink);
+    color:#fff;
+    padding:168px 0 96px;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .waves-mount{
+    position:absolute;
+    inset:-1px;
+    z-index:0;
+    overflow:hidden;
+    opacity:0.9;
+    --x:-1rem;
+    --y:50%;
+  }
+  .waves-mount svg{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+  .waves-mount .js-line{
+    stroke:var(--volt);
+    stroke-opacity:0.55;
+    fill:none;
+  }
+
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(10,10,14,0) 0%, rgba(10,10,14,0.55) 78%, var(--ink) 100%);
+    z-index:1;
+    pointer-events:none;
+  }
+  .hero__inner{position:relative;z-index:2;}
+  .hero__grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:48px;
+    align-items:end;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 4.6vw, 4.4rem);
+    line-height:1.02;
+    margin-top:22px;
+    max-width:640px;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--volt);
+  }
+  .hero__sub{
+    margin-top:26px;
+    max-width:480px;
+    font-size:17px;
+    color:rgba(255,255,255,0.72);
+  }
+  .hero__ctas{
+    display:flex;
+    gap:14px;
+    margin-top:38px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:15px 28px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:15px;
+    border:1px solid transparent;
+    transition:transform .25s var(--ease), background .25s, border-color .25s, color .25s;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn--volt{background:var(--volt); color:var(--ink);}
+  .btn--volt:hover{background:#fff;}
+  .btn--ghost-dark{border-color:rgba(255,255,255,0.28); color:#fff;}
+  .btn--ghost-dark:hover{border-color:#fff;background:rgba(255,255,255,0.08);}
+  .btn--ink{background:var(--ink);color:#fff;}
+  .btn--ink:hover{background:var(--volt-dark);}
+  .btn--ghost-light{border-color:var(--line); color:var(--ink);}
+  .btn--ghost-light:hover{border-color:var(--ink);}
+  .btn--block{width:100%;justify-content:center;}
+
+  .hero__bolt{
+    justify-self:end;
+    opacity:0.95;
+    max-width:230px;
+  }
+  .hero__bolt img{width:100%;}
+
+  .stats{
+    margin-top:76px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--ink-line);
+    padding-top:28px;
+  }
+  .stats__item{
+    border-left:1px solid var(--ink-line);
+    padding-left:20px;
+  }
+  .stats__item:first-child{border-left:none;padding-left:0;}
+  .stats__num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.5rem,2.6vw,2.1rem);
+    font-weight:700;
+    color:var(--volt);
+  }
+  .stats__label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.55);
+    margin-top:6px;
+  }
+
+  /* ---------- signal divider ---------- */
+  .signal{
+    position:relative;
+    height:64px;
+    background:var(--paper);
+  }
+  .signal svg{
+    position:absolute; left:0; top:50%; transform:translateY(-50%);
+    width:100%; height:34px;
+  }
+  .signal path{
+    fill:none;
+    stroke:var(--line);
+    stroke-width:1.5;
+  }
+  .signal path.live{
+    stroke:var(--volt-deep);
+    stroke-dasharray:6 14;
+    animation:signalflow 5s linear infinite;
+    opacity:0.55;
+  }
+  @keyframes signalflow{ to{ stroke-dashoffset:-400; } }
+
+  /* ---------- SECTION shared ---------- */
+  section{padding:118px 0;}
+  .section-head{
+    max-width:640px;
+    margin-bottom:64px;
+  }
+  .section-head h2{
+    font-size:clamp(1.9rem,3.2vw,2.6rem);
+    margin-top:18px;
+  }
+  .section-head p{
+    margin-top:16px;
+    font-size:16.5px;
+    color:var(--ink-50);
+    max-width:520px;
+  }
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .section-head.center p{margin-left:auto;margin-right:auto;}
+  .section-head.center .eyebrow{justify-content:center;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:0;
+    border-top:1px solid var(--line);
+  }
+  .step{
+    padding:36px 30px 0 0;
+    border-right:1px solid var(--line);
+    position:relative;
+  }
+  .step:last-child{border-right:none;padding-right:0;}
+  .step__num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    color:var(--volt-deep);
+    letter-spacing:0.08em;
+  }
+  .step__bolt{
+    width:34px; height:34px;
+    margin:18px 0 22px;
+  }
+  .step h3{font-size:21px;margin-bottom:12px;}
+  .step p{color:var(--ink-50); font-size:15px; max-width:280px;}
+
+  /* ---------- WHY PARTNER (value grid) ---------- */
+  .why{background:var(--ink); color:#fff;}
+  .why .section-head p{color:rgba(255,255,255,0.6);}
+  .value-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--ink-line);
+    border:1px solid var(--ink-line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .value-card{
+    background:var(--ink);
+    padding:34px 26px;
+  }
+  .value-card__icon{
+    width:22px;height:22px;
+    background:var(--volt);
+    clip-path:polygon(58% 0, 12% 55%, 44% 55%, 30% 100%, 88% 42%, 52% 42%);
+    margin-bottom:22px;
+  }
+  .value-card h3{font-size:17px; color:#fff; margin-bottom:10px; font-weight:600; font-family:'Space Grotesk',sans-serif;}
+  .value-card p{font-size:14.5px; color:rgba(255,255,255,0.55); line-height:1.55;}
+
+  /* ---------- STATIONS / MAP ---------- */
+  .stations{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:56px;
+    align-items:center;
+  }
+  .map-card{
+    background:var(--paper-dim);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+    position:relative;
+    overflow:hidden;
+    aspect-ratio:6/5;
+  }
+  .map-card svg{width:100%;height:100%;}
+  .map-pin{
+    fill:var(--volt-dark);
+  }
+  .map-pin.a{animation:pulse 2.6s ease-in-out infinite;}
+  .map-pin.b{animation:pulse 2.6s ease-in-out infinite .5s;}
+  .map-pin.c{animation:pulse 2.6s ease-in-out infinite 1s;}
+  .map-pin.d{animation:pulse 2.6s ease-in-out infinite 1.5s;}
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:.35;}
+  }
+  .city-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:32px;
+  }
+  .city-chip{
+    display:flex;
+    justify-content:space-between;
+    padding:13px 16px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    font-size:14px;
+  }
+  .city-chip span:last-child{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--volt-dark);
+    font-size:12.5px;
+  }
+
+  /* ---------- PRICING ---------- */
+  .pricing-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+  }
+  .price-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:34px 30px;
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+    transition:border-color .25s, transform .25s var(--ease);
+  }
+  .price-card:hover{transform:translateY(-4px);}
+  .price-card--feature{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+  .price-card__name{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--volt-dark);
+  }
+  .price-card--feature .price-card__name{color:var(--volt);}
+  .price-card__price{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:2.5rem;
+    font-weight:700;
+    margin-top:14px;
+  }
+  .price-card__price span{font-size:0.9rem; font-weight:500; color:var(--ink-50);}
+  .price-card--feature .price-card__price span{color:rgba(255,255,255,0.55);}
+  .price-card__desc{margin-top:10px; font-size:14.5px; color:var(--ink-50);}
+  .price-card--feature .price-card__desc{color:rgba(255,255,255,0.6);}
+  .price-card ul{margin-top:26px; display:flex; flex-direction:column; gap:12px; flex:1;}
+  .price-card li{
+    font-size:14px;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .price-card li::before{
+    content:"";
+    width:6px;height:6px;
+    margin-top:6px;
+    background:var(--volt-dark);
+    transform:rotate(45deg);
+    flex:none;
+  }
+  .price-card--feature li::before{background:var(--volt);}
+  .price-card .btn{margin-top:28px;}
+
+  /* ---------- PARTNER CTA / FORM ---------- */
+  .partner{
+    background:var(--volt-light);
+    border-radius:28px;
+    margin:0 32px;
+    padding:76px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    position:relative;
+    overflow:hidden;
+  }
+  .partner__bolt{
+    position:absolute;
+    right:-40px; top:-60px;
+    width:340px;
+    opacity:0.5;
+    pointer-events:none;
+  }
+  .partner h2{font-size:clamp(1.9rem,3vw,2.5rem);}
+  .partner__copy p{margin-top:18px; color:var(--ink-70); max-width:440px; font-size:16px;}
+  .partner__list{margin-top:28px; display:flex; flex-direction:column; gap:14px;}
+  .partner__list li{
+    display:flex; gap:12px; font-size:14.5px; align-items:flex-start;
+  }
+  .partner__list li::before{
+    content:"";
+    width:7px;height:7px;
+    margin-top:6px;
+    background:var(--volt-dark);
+    transform:rotate(45deg);
+    flex:none;
+  }
+  .form-card{
+    background:#fff;
+    border-radius:18px;
+    padding:36px;
+    box-shadow:0 20px 60px -20px rgba(76,47,209,0.25);
+    position:relative;
+    z-index:1;
+  }
+  .form-card h3{font-size:19px;margin-bottom:6px;}
+  .form-card .form-sub{color:var(--ink-50); font-size:13.5px; margin-bottom:24px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:12.5px;
+    font-weight:600;
+    margin-bottom:7px;
+    color:var(--ink-70);
+  }
+  .field input, .field select{
+    width:100%;
+    padding:12px 14px;
+    border-radius:9px;
+    border:1px solid var(--line);
+    font-family:inherit;
+    font-size:14.5px;
+    background:var(--paper);
+    transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus{border-color:var(--volt-deep);}
+  .form-note{
+    margin-top:14px;
+    font-size:12px;
+    color:var(--ink-50);
+    text-align:center;
+  }
+  .form-success{
+    display:none;
+    text-align:center;
+    padding:20px 0;
+  }
+  .form-success.show{display:block;}
+  .form-success .step__bolt{margin:0 auto 16px;}
+  .form-fields.hide{display:none;}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .quote-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+  }
+  .quote-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:30px;
+    background:#fff;
+  }
+  .quote-card__mark{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:40px;
+    color:var(--volt);
+    line-height:1;
+  }
+  .quote-card p{margin-top:14px; font-size:15px; color:var(--ink-70); line-height:1.6;}
+  .quote-card__who{
+    margin-top:22px;
+    display:flex;
+    flex-direction:column;
+    font-size:13.5px;
+  }
+  .quote-card__who strong{font-weight:600;}
+  .quote-card__who span{color:var(--ink-50); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:2px;}
+
+  /* ---------- FAQ ---------- */
+  .faq-list{
+    max-width:760px;
+    border-top:1px solid var(--line);
+  }
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{
+    width:100%;
+    background:none;
+    border:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:26px 4px;
+    text-align:left;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:17px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .faq-q__plus{
+    position:relative;
+    width:18px;height:18px;
+    flex:none;
+    margin-left:20px;
+  }
+  .faq-q__plus::before, .faq-q__plus::after{
+    content:"";
+    position:absolute;
+    background:var(--ink);
+    transition:transform .3s var(--ease), opacity .3s;
+  }
+  .faq-q__plus::before{width:100%;height:2px;top:8px;left:0;}
+  .faq-q__plus::after{width:2px;height:100%;left:8px;top:0;}
+  .faq-item.open .faq-q__plus::after{transform:rotate(90deg); opacity:0;}
+  .faq-item.open .faq-q__plus::before{background:var(--volt-deep);}
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s var(--ease);
+  }
+  .faq-a p{
+    padding:0 4px 26px;
+    color:var(--ink-50);
+    font-size:15px;
+    max-width:600px;
+    line-height:1.6;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--ink);
+    color:#fff;
+    padding:88px 0 32px;
+  }
+  .footer-top{
+    display:grid;
+    grid-template-columns:1.3fr 1fr 1fr 1fr;
+    gap:40px;
+    padding-bottom:64px;
+    border-bottom:1px solid var(--ink-line);
+  }
+  .footer-brand img{height:24px;margin-bottom:20px;}
+  .footer-brand p{color:rgba(255,255,255,0.5); font-size:14px; max-width:260px;}
+  .footer-col h4{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.45);
+    margin-bottom:18px;
+    font-weight:500;
+  }
+  .footer-col ul{display:flex;flex-direction:column;gap:12px;}
+  .footer-col a{font-size:14.5px; color:rgba(255,255,255,0.75); transition:color .2s;}
+  .footer-col a:hover{color:var(--volt);}
+  .app-badges{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+  .app-badge{
+    display:flex;align-items:center;gap:10px;
+    border:1px solid var(--ink-line);
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:13px;
+    color:#fff;
+    transition:border-color .2s, background .2s;
+  }
+  .app-badge:hover{border-color:var(--volt); background:rgba(167,139,250,0.08);}
+  .app-badge svg{width:18px;height:18px;flex:none;}
+  .footer-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top:28px;
+    font-size:13px;
+    color:rgba(255,255,255,0.4);
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .footer-social{display:flex;gap:16px;}
+  .footer-social a{color:rgba(255,255,255,0.5);}
+  .footer-social a:hover{color:var(--volt);}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    .nav__links{display:none;}
+    .nav__burger{display:block;}
+    .hero__grid{grid-template-columns:1fr;}
+    .hero__bolt{display:none;}
+    .stats{grid-template-columns:repeat(2,1fr); row-gap:24px;}
+    .stats__item:nth-child(3){border-left:none;padding-left:0;}
+    .steps{grid-template-columns:1fr; row-gap:32px;}
+    .step{border-right:none; padding-right:0;}
+    .value-grid{grid-template-columns:1fr 1fr;}
+    .stations{grid-template-columns:1fr;}
+    .pricing-grid{grid-template-columns:1fr;}
+    .partner{grid-template-columns:1fr; padding:44px 28px; margin:0 16px; border-radius:20px;}
+    .partner__bolt{display:none;}
+    .quote-grid{grid-template-columns:1fr;}
+    .footer-top{grid-template-columns:1fr 1fr; row-gap:36px;}
+    .wrap{padding:0 20px;}
+    section{padding:80px 0;}
+  }
+  @media (max-width:520px){
+    .value-grid{grid-template-columns:1fr;}
+    .footer-top{grid-template-columns:1fr;}
+    .city-list{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="nav__logo"><img src="assets/Long_Logo_Waves.png" alt="ZippZapp"></a>
+    <nav class="nav__links">
+      <a href="#how">How it works</a>
+      <a href="#stations">Stations</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#partner">Partners</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#download" class="nav__cta">Get the app</a>
+    <button class="nav__burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="waves-mount" id="wavesMount"></div>
+    <div class="wrap hero__inner">
+      <div class="hero__grid">
+        <div>
+          <p class="eyebrow on-dark">Power bank rental network</p>
+          <h1>Turn dead batteries into <em>recurring revenue.</em></h1>
+          <p class="hero__sub">ZippZapp installs a charging station in your venue — free setup, zero upkeep, and one more reason customers stick around a little longer.</p>
+          <div class="hero__ctas">
+            <a href="#partner" class="btn btn--volt">Become a host venue</a>
+            <a href="#stations" class="btn btn--ghost-dark">Find a station →</a>
+          </div>
+        </div>
+        <div class="hero__bolt">
+          <img src="assets/Full_Logo_Waves_White.png" alt="">
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stats__item">
+          <div class="stats__num">420+</div>
+          <div class="stats__label">Host venues</div>
+        </div>
+        <div class="stats__item">
+          <div class="stats__num">38</div>
+          <div class="stats__label">Cities</div>
+        </div>
+        <div class="stats__item">
+          <div class="stats__num">1.2M</div>
+          <div class="stats__label">Rentals completed</div>
+        </div>
+        <div class="stats__item">
+          <div class="stats__num">99.9%</div>
+          <div class="stats__label">Station uptime</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+    <path class="live" d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+  </svg></div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">The customer experience</p>
+        <h2>Three steps. Zero cables.</h2>
+        <p>This is what your customers do at the kiosk in your lobby, counter, or bar — no app friction, no deposits held hostage.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <p class="step__num">01 / SCAN</p>
+          <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="#6d4ff2"/></svg>
+          <h3>Scan &amp; grab</h3>
+          <p>A QR code on the station unlocks a fully charged bank in under two seconds — no account setup required.</p>
+        </div>
+        <div class="step">
+          <p class="step__num">02 / CHARGE</p>
+          <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="#6d4ff2"/></svg>
+          <h3>Power up on the go</h3>
+          <p>Universal cable built in. Works with any phone, no adapters to carry or lose along the way.</p>
+        </div>
+        <div class="step">
+          <p class="step__num">03 / RETURN</p>
+          <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="#6d4ff2"/></svg>
+          <h3>Return anywhere</h3>
+          <p>Drop it at any station in the network — not just the one it came from. The rental closes itself out.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+    <path class="live" d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+  </svg></div>
+
+  <!-- WHY PARTNER -->
+  <section class="why">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow on-dark">For venues</p>
+        <h2 style="color:#fff;">Why 420+ venues already host a station</h2>
+        <p>A station is a countertop amenity that pays you back — not another piece of equipment to manage.</p>
+      </div>
+      <div class="value-grid">
+        <div class="value-card">
+          <div class="value-card__icon"></div>
+          <h3>Zero cost to install</h3>
+          <p>Kiosk, power draw, and software are all on us. There's no upfront fee, ever.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-card__icon"></div>
+          <h3>Revenue on autopilot</h3>
+          <p>Earn a share of every rental made at your location, paid out monthly — no invoicing.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-card__icon"></div>
+          <h3>Keeps guests around</h3>
+          <p>A dead phone sends people home early. A charged one means one more round, one more browse.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-card__icon"></div>
+          <h3>We run the logistics</h3>
+          <p>Restocking, maintenance, and customer support are handled by our team, not your staff.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+    <path class="live" d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+  </svg></div>
+
+  <!-- STATIONS -->
+  <section id="stations">
+    <div class="wrap stations">
+      <div>
+        <p class="eyebrow">Coverage</p>
+        <h2 style="margin-top:18px; font-size:clamp(1.9rem,3.2vw,2.6rem);">Already on the counter near you</h2>
+        <p style="margin-top:16px; color:var(--ink-50); font-size:16.5px; max-width:440px;">From coffee counters to airport lounges, find the nearest ZippZapp station in the app before you're down to 5%.</p>
+        <div class="city-list">
+          <div class="city-chip"><span>New York</span><span>54 stations</span></div>
+          <div class="city-chip"><span>Austin</span><span>31 stations</span></div>
+          <div class="city-chip"><span>Chicago</span><span>28 stations</span></div>
+          <div class="city-chip"><span>Miami</span><span>22 stations</span></div>
+          <div class="city-chip"><span>Denver</span><span>17 stations</span></div>
+          <div class="city-chip"><span>Portland</span><span>15 stations</span></div>
+        </div>
+        <a href="#download" class="btn btn--ink" style="margin-top:30px;">View the full map</a>
+      </div>
+      <div class="map-card">
+        <svg viewBox="0 0 400 340" fill="none">
+          <path d="M40 40 L360 40 L340 120 L380 180 L320 260 L280 300 L180 300 L120 260 L30 220 L60 140 Z" stroke="var(--line)" stroke-width="1.5"/>
+          <path d="M70 90 L330 100 M55 160 L345 165 M90 230 L300 235" stroke="var(--line)" stroke-width="1"/>
+          <circle class="map-pin a" cx="120" cy="90" r="6"/>
+          <circle class="map-pin b" cx="230" cy="130" r="6"/>
+          <circle class="map-pin c" cx="180" cy="210" r="6"/>
+          <circle class="map-pin d" cx="270" cy="230" r="6"/>
+          <circle class="map-pin a" cx="90" cy="190" r="6"/>
+          <circle class="map-pin c" cx="300" cy="150" r="6"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+    <path class="live" d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+  </svg></div>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="section-head center">
+        <p class="eyebrow">Rental plans</p>
+        <h2>Simple pricing, for whoever's borrowing</h2>
+        <p>No deposits, no surprise fees. Charged in-app the moment the bank is returned.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <p class="price-card__name">Quick charge</p>
+          <div class="price-card__price">$1.50 <span>/ hour</span></div>
+          <p class="price-card__desc">First 20 minutes free. Best for a quick top-up between stops.</p>
+          <ul>
+            <li>Pay only for time used</li>
+            <li>Return to any station</li>
+            <li>No subscription required</li>
+          </ul>
+          <a href="#download" class="btn btn--ghost-light btn--block">Get the app</a>
+        </div>
+        <div class="price-card price-card--feature">
+          <p class="price-card__name">Zippzapp+</p>
+          <div class="price-card__price">$9.99 <span>/ month</span></div>
+          <p class="price-card__desc">Unlimited swaps across the entire network. Built for daily commuters.</p>
+          <ul>
+            <li>Unlimited rentals, any duration</li>
+            <li>Priority reservation at busy stations</li>
+            <li>Cancel anytime</li>
+          </ul>
+          <a href="#download" class="btn btn--volt btn--block">Start free trial</a>
+        </div>
+        <div class="price-card">
+          <p class="price-card__name">Day pass</p>
+          <div class="price-card__price">$6.00 <span>/ 24 hrs</span></div>
+          <p class="price-card__desc">One flat rate, capped for the day. Ideal for travel and event days.</p>
+          <ul>
+            <li>Rate capped at 24 hours</li>
+            <li>Swap as many times as needed</li>
+            <li>Great for airports &amp; events</li>
+          </ul>
+          <a href="#download" class="btn btn--ghost-light btn--block">Get the app</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+    <path class="live" d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+  </svg></div>
+
+  <!-- PARTNER FORM -->
+  <section id="partner">
+    <div class="partner">
+      <img class="partner__bolt" src="assets/Full_Logo_Waves.png" alt="">
+      <div class="partner__copy">
+        <p class="eyebrow">Apply in minutes</p>
+        <h2 style="margin-top:18px;">Bring ZippZapp to your venue</h2>
+        <p>Cafés, bars, gyms, coworking spaces, hotels, and airports all host ZippZapp stations today. If people linger at your venue, a station belongs there.</p>
+        <ul class="partner__list">
+          <li>Setup takes under 15 minutes — we install and train your team</li>
+          <li>Earn up to 30% of rental revenue generated at your location</li>
+          <li>Real-time dashboard so you always know what's earned</li>
+          <li>Restocking and support handled entirely by ZippZapp</li>
+        </ul>
+      </div>
+      <div class="form-card">
+        <div class="form-fields" id="partnerForm">
+          <h3>Request a station</h3>
+          <p class="form-sub">We'll follow up within two business days.</p>
+          <form id="partnerFormEl">
+            <div class="field">
+              <label for="venueName">Venue name</label>
+              <input id="venueName" type="text" required placeholder="e.g. Corner Coffee Co.">
+            </div>
+            <div class="field">
+              <label for="venueType">Venue type</label>
+              <select id="venueType">
+                <option>Café / Coffee shop</option>
+                <option>Bar / Restaurant</option>
+                <option>Gym / Fitness studio</option>
+                <option>Hotel</option>
+                <option>Coworking space</option>
+                <option>Airport / Transit hub</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="city">City</label>
+              <input id="city" type="text" required placeholder="e.g. Austin, TX">
+            </div>
+            <div class="field">
+              <label for="email">Contact email</label>
+              <input id="email" type="email" required placeholder="you@venue.com">
+            </div>
+            <button type="submit" class="btn btn--ink btn--block">Request setup</button>
+          </form>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="#6d4ff2"/></svg>
+          <h3>Request received</h3>
+          <p class="form-sub">Someone from our partnerships team will reach out shortly.</p>
+        </div>
+        <p class="form-note">This is a preview form — no data is submitted anywhere yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="wrap">
+      <div class="section-head center">
+        <p class="eyebrow">From the network</p>
+        <h2>Riders and venues, in their own words</h2>
+      </div>
+      <div class="quote-grid">
+        <div class="quote-card">
+          <div class="quote-card__mark">“</div>
+          <p>I haven't run out of battery at a show in over a year. There's always a station near the merch table.</p>
+          <div class="quote-card__who"><strong>Mara T.</strong><span>Daily rider — Chicago</span></div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-card__mark">“</div>
+          <p>We installed one at each of our two locations in the same week. It's the easiest yes we've ever given a vendor.</p>
+          <div class="quote-card__who"><strong>Dana K.</strong><span>Owner, Corner Coffee Co.</span></div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-card__mark">“</div>
+          <p>Guests notice it in the lobby. It's a small detail that tells them we thought about their stay.</p>
+          <div class="quote-card__who"><strong>Theo R.</strong><span>General Manager, Hotel Marlow</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+    <path class="live" d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+  </svg></div>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Good to know</p>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item open">
+          <button class="faq-q"><span>Does it cost anything to install a station?</span><span class="faq-q__plus"></span></button>
+          <div class="faq-a"><p>No. ZippZapp covers the kiosk, installation, power draw, and software at no upfront cost to the venue. You provide the counter space and a standard outlet.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q"><span>How much can my venue earn?</span><span class="faq-q__plus"></span></button>
+          <div class="faq-a"><p>Payouts scale with foot traffic and rental volume. Most venues in a busy location earn between $150–$600 per month, paid out automatically at the start of each month.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q"><span>What happens if a bank isn't returned?</span><span class="faq-q__plus"></span></button>
+          <div class="faq-a"><p>The rider's card on file is charged a replacement fee after 72 hours, and a new bank is shipped to the venue automatically — your station never runs short.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q"><span>What if all the banks at a station are checked out?</span><span class="faq-q__plus"></span></button>
+          <div class="faq-a"><p>The app shows live availability and routes riders to the next-nearest station. High-traffic venues are restocked proactively based on usage data.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q"><span>Which cities is ZippZapp in today?</span><span class="faq-q__plus"></span></button>
+          <div class="faq-a"><p>We're live in 38 cities and expanding monthly. Check the in-app map for current coverage near you, or apply as a venue to help us reach yours sooner.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="download">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="assets/Long_Logo_Waves_White.png" alt="ZippZapp">
+        <p>A power bank rental network built for cities that don't stop moving. Charge up, drop off, keep going.</p>
+        <div class="app-badges">
+          <a href="#" class="app-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg> App Store</a>
+          <a href="#" class="app-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.6c-.34.3-.55.76-.55 1.28v16.24c0 .52.21.98.55 1.28l.1.08 9.1-9.1v-.21L3.7 2.5l-.1.1zm12.02 9.9l3.02-3.02-9-5.1 5.98 8.12zm-9 6.9l9-5.1-3.02-3.02-5.98 8.12zm12.02-9.9l-3.02 3.02-9.1 9.1.1.06 12.02-6.94c.5-.29.5-1 0-1.28l-.02-.06-9-5.16-.1.06 9.12 5.2z"/></svg> Google Play</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#stations">Find a station</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Business</h4>
+        <ul>
+          <li><a href="#partner">Partner with us</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#">Bulk / fleet orders</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ZippZapp, Inc. All rights reserved.</span>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="X">X</a>
+        <a href="#" aria-label="TikTok">TikTok</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- Waves (ported from the supplied React component) ----------
+  // Self-contained 2D gradient noise (no external simplex-noise dependency,
+  // so the file works standalone / offline). Same role as createNoise2D().
+  function makeNoise2D(seed){
+    seed = seed || 1;
+    const perm = new Uint8Array(512);
+    const p = new Uint8Array(256);
+    for(let i=0;i<256;i++) p[i]=i;
+    let s = seed * 9301 + 49297;
+    function rand(){ s = (s*9301+49297)%233280; return s/233280; }
+    for(let i=255;i>0;i--){
+      const j = Math.floor(rand()*(i+1));
+      const tmp = p[i]; p[i]=p[j]; p[j]=tmp;
+    }
+    for(let i=0;i<512;i++) perm[i]=p[i&255];
+    function fade(t){return t*t*t*(t*(t*6-15)+10);}
+    function lerp(a,b,t){return a+t*(b-a);}
+    function grad(hash,x,y){
+      const h = hash & 3;
+      const u = h<2 ? x : y;
+      const v = h<2 ? y : x;
+      return ((h&1)? -u:u) + ((h&2)? -2*v:2*v);
+    }
+    return function(x,y){
+      const X = Math.floor(x)&255, Y=Math.floor(y)&255;
+      x -= Math.floor(x); y -= Math.floor(y);
+      const u=fade(x), v=fade(y);
+      const aa=perm[X+perm[Y]], ab=perm[X+perm[Y+1]], ba=perm[X+1+perm[Y]], bb=perm[X+1+perm[Y+1]];
+      return lerp(
+        lerp(grad(aa,x,y), grad(ba,x-1,y), u),
+        lerp(grad(ab,x,y-1), grad(bb,x-1,y-1), u),
+        v
+      );
+    };
+  }
+
+  (function(){
+    const container = document.getElementById('wavesMount');
+    if(!container) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isSmall = window.innerWidth < 700;
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS,'svg');
+    container.appendChild(svg);
+
+    const noise = makeNoise2D(7);
+
+    const mouse = { x:-10, y:0, lx:0, ly:0, sx:0, sy:0, v:0, vs:0, a:0, set:false };
+    let bounding = null;
+    let lines = [];
+    let paths = [];
+
+    const xGap = isSmall ? 16 : 10;
+    const yGap = isSmall ? 16 : 10;
+
+    function setSize(){
+      bounding = container.getBoundingClientRect();
+    }
+
+    function setLines(){
+      const { width, height } = bounding;
+      lines = [];
+      paths.forEach(p=>p.remove());
+      paths = [];
+
+      const oWidth = width + 200;
+      const oHeight = height + 30;
+      const totalLines = Math.ceil(oWidth / xGap);
+      const totalPoints = Math.ceil(oHeight / yGap);
+      const xStart = (width - xGap*totalLines) / 2;
+      const yStart = (height - yGap*totalPoints) / 2;
+
+      for(let i=0;i<totalLines;i++){
+        const points = [];
+        for(let j=0;j<totalPoints;j++){
+          points.push({
+            x: xStart + xGap*i,
+            y: yStart + yGap*j,
+            wave:{x:0,y:0},
+            cursor:{x:0,y:0,vx:0,vy:0}
+          });
+        }
+        const path = document.createElementNS(svgNS,'path');
+        path.classList.add('js-line');
+        svg.appendChild(path);
+        paths.push(path);
+        lines.push(points);
+      }
+    }
+
+    function updateMouse(x,y){
+      mouse.x = x - bounding.left;
+      mouse.y = y - bounding.top + window.scrollY;
+      if(!mouse.set){
+        mouse.sx = mouse.x; mouse.sy = mouse.y;
+        mouse.lx = mouse.x; mouse.ly = mouse.y;
+        mouse.set = true;
+      }
+      container.style.setProperty('--x', mouse.sx + 'px');
+      container.style.setProperty('--y', mouse.sy + 'px');
+    }
+
+    function onMouseMove(e){ updateMouse(e.pageX, e.pageY); }
+    function onTouchMove(e){
+      const t = e.touches[0];
+      if(t) updateMouse(t.clientX, t.clientY + window.scrollY);
+    }
+
+    function movePoints(time){
+      lines.forEach(points=>{
+        points.forEach(p=>{
+          const move = noise(
+            (p.x + time*0.008) * 0.003,
+            (p.y + time*0.003) * 0.002
+          ) * 8;
+
+          p.wave.x = Math.cos(move) * 12;
+          p.wave.y = Math.sin(move) * 6;
+
+          const dx = p.x - mouse.sx;
+          const dy = p.y - mouse.sy;
+          const d = Math.hypot(dx,dy);
+          const l = Math.max(175, mouse.vs);
+
+          if(d < l){
+            const s = 1 - d/l;
+            const f = Math.cos(d*0.001) * s;
+            p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00035;
+            p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00035;
+          }
+
+          p.cursor.vx += (0 - p.cursor.x) * 0.01;
+          p.cursor.vy += (0 - p.cursor.y) * 0.01;
+          p.cursor.vx *= 0.95;
+          p.cursor.vy *= 0.95;
+          p.cursor.x += p.cursor.vx;
+          p.cursor.y += p.cursor.vy;
+          p.cursor.x = Math.min(50, Math.max(-50, p.cursor.x));
+          p.cursor.y = Math.min(50, Math.max(-50, p.cursor.y));
+        });
+      });
+    }
+
+    function moved(point, withCursor){
+      return {
+        x: point.x + point.wave.x + (withCursor ? point.cursor.x : 0),
+        y: point.y + point.wave.y + (withCursor ? point.cursor.y : 0)
+      };
+    }
+
+    function drawLines(){
+      lines.forEach((points,i)=>{
+        if(points.length < 2 || !paths[i]) return;
+        const first = moved(points[0], false);
+        let d = `M ${first.x} ${first.y}`;
+        for(let k=1;k<points.length;k++){
+          const c = moved(points[k], true);
+          d += `L ${c.x} ${c.y}`;
+        }
+        paths[i].setAttribute('d', d);
+      });
+    }
+
+    function tick(time){
+      mouse.sx += (mouse.x - mouse.sx) * 0.1;
+      mouse.sy += (mouse.y - mouse.sy) * 0.1;
+      const dx = mouse.x - mouse.lx;
+      const dy = mouse.y - mouse.ly;
+      const d = Math.hypot(dx,dy);
+      mouse.v = d;
+      mouse.vs += (d - mouse.vs) * 0.1;
+      mouse.vs = Math.min(100, mouse.vs);
+      mouse.lx = mouse.x; mouse.ly = mouse.y;
+      mouse.a = Math.atan2(dy,dx);
+
+      container.style.setProperty('--x', mouse.sx + 'px');
+      container.style.setProperty('--y', mouse.sy + 'px');
+
+      movePoints(time);
+      drawLines();
+      if(!reduceMotion) requestAnimationFrame(tick);
+    }
+
+    function init(){
+      setSize();
+      setLines();
+      if(reduceMotion){
+        movePoints(0);
+        drawLines();
+      } else {
+        requestAnimationFrame(tick);
+      }
+    }
+
+    window.addEventListener('resize', ()=>{ setSize(); setLines(); });
+    window.addEventListener('mousemove', onMouseMove);
+    container.addEventListener('touchmove', onTouchMove, { passive:true });
+
+    init();
+  })();
+
+  // ---------- FAQ accordion ----------
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    const btn = item.querySelector('.faq-q');
+    const answer = item.querySelector('.faq-a');
+    function setState(open){
+      if(open){ answer.style.maxHeight = answer.scrollHeight + 'px'; item.classList.add('open'); }
+      else { answer.style.maxHeight = '0px'; item.classList.remove('open'); }
+    }
+    setState(item.classList.contains('open'));
+    btn.addEventListener('click', ()=> setState(!item.classList.contains('open')));
+  });
+  window.addEventListener('resize', ()=>{
+    document.querySelectorAll('.faq-item.open .faq-a').forEach(a=> a.style.maxHeight = a.scrollHeight + 'px');
+  });
+
+  // ---------- Partner form (demo, no backend) ----------
+  const partnerFormEl = document.getElementById('partnerFormEl');
+  partnerFormEl.addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('partnerForm').style.display = 'none';
+    document.getElementById('formSuccess').classList.add('show');
+  });
+
+  // ---------- Mobile menu (simple toggle to nav links as list) ----------
+  const burger = document.querySelector('.nav__burger');
+  const navLinks = document.querySelector('.nav__links');
+  burger.addEventListener('click', ()=>{
+    const isOpen = navLinks.style.display === 'flex';
+    navLinks.style.display = isOpen ? 'none' : 'flex';
+    navLinks.style.cssText += isOpen ? '' : 'position:absolute;top:76px;left:0;right:0;background:var(--paper);flex-direction:column;padding:20px 32px;border-bottom:1px solid var(--line);gap:20px;';
+  });
+</script>
+</body>
+</html>
