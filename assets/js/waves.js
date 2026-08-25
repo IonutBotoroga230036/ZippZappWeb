@@ -197,6 +197,11 @@ function initWaveField(container){
   function tick(time){
     if(!visible){ running = false; return; }
 
+    // Refresh the mount's viewport rect here rather than on a scroll listener. The loop
+    // only runs while the field is visible, so this costs less than listening to scroll,
+    // and it keeps the cursor hotspot aligned as the page moves.
+    setSize();
+
     mouse.sx += (mouse.x - mouse.sx) * 0.1;
     mouse.sy += (mouse.y - mouse.sy) * 0.1;
     const dx = mouse.x - mouse.lx;
@@ -236,7 +241,6 @@ function initWaveField(container){
   }
 
   window.addEventListener('resize', ()=>{ setSize(); setLines(); });
-  window.addEventListener('scroll', setSize, { passive:true });
   window.addEventListener('mousemove', onMouseMove);
   container.addEventListener('touchmove', onTouchMove, { passive:true });
 

@@ -180,9 +180,11 @@ header{
 .nav__burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;transition:.25s;}
 
 /* ---------- HERO ---------- */
+/* Top padding clears the 76px fixed header with room to breathe, without floating
+   the headline down the viewport. The hero must fit above the fold. */
 .hero{
   position:relative;
-  padding:168px 0 96px;
+  padding:124px 0 104px;
   overflow:hidden;
   isolation:isolate;
 }
@@ -220,12 +222,17 @@ header{
   display:grid;
   grid-template-columns:1fr;
 }
+/* Set as a slogan: three clauses, one per line, each its own beat. The line breaks come
+   from the spans below rather than from wrapping, so the shape survives any width. */
 .hero h1{
-  font-size:clamp(2.6rem, 4.6vw, 4.4rem);
-  line-height:1.02;
+  /* The vw term is steep so the longest clause ("Keep going.") still fits on one line
+     at 375px, where anything above 38px wraps and breaks the three-beat shape. */
+  font-size:clamp(1.85rem, 8.5vw, 4.3rem);
+  line-height:1.0;
   margin-top:22px;
-  max-width:640px;
 }
+.hero h1 span,
+.hero h1 em{display:block;}
 .hero h1 em{
   font-style:normal;
   color:var(--volt);
@@ -263,6 +270,10 @@ header{
 .btn--ghost-light{border-color:var(--line); color:var(--ink);}
 .btn--ghost-light:hover{border-color:var(--ink);}
 .btn--block{width:100%;justify-content:center;}
+
+/* Band carrying the renter figure bar directly under the hero. */
+.figures{padding:0 0 96px;}
+.figures .stats{margin-top:0;}
 
 /* Hairline rule-grid of headline figures. Used once per act. */
 .stats{
@@ -357,6 +368,32 @@ section{padding:118px 0;}
 }
 .step h3{font-size:21px;margin-bottom:12px;}
 .step p{color:var(--on-surface-50); font-size:15px; max-width:280px;}
+
+/* ---------- LEDGER (vertical numbered sequence) ---------- */
+/* Act two's counterpart to .steps. Same kind of content, deliberately a different
+   composition so the two acts do not read as the same page twice. */
+.ledger{
+  max-width:760px;
+  border-top:1px solid var(--rule);
+}
+.ledger__row{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:32px;
+  align-items:baseline;
+  padding:34px 0;
+  border-bottom:1px solid var(--rule);
+}
+.ledger__num{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:2.4rem;
+  font-weight:700;
+  line-height:1;
+  color:var(--accent);
+  opacity:0.32;
+}
+.ledger__body h3{font-size:20px; margin-bottom:10px;}
+.ledger__body p{color:var(--on-surface-50); font-size:15.5px; max-width:520px;}
 
 /* ---------- PRODUCT (image plate beside copy) ---------- */
 .product{
