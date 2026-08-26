@@ -590,25 +590,46 @@ section{padding:118px 0;}
 .actbreak::before{
   content:"";
   position:absolute;
-  top:0; left:0; right:0; height:180px;
-  /* Alpha follows a smootherstep S-curve (6t^5-15t^4+10t^3) rather than ramping
-     linearly. The eye judges perceptual lightness, which is non-linear: a linear ramp
-     gains 10 L* points inside its first tenth (top goes light too fast) and is still
-     visibly grey at 90% (a tail hazing over the paper). The S-curve holds near-black
-     through the first fifth and settles into full transparency early.
-     CSS interpolates linearly between stops, hence tracing the curve by hand. */
-  background:linear-gradient(180deg,
-    rgba(10,10,14,1)     0%,
-    rgba(10,10,14,0.991) 10%,
-    rgba(10,10,14,0.942) 20%,
-    rgba(10,10,14,0.837) 30%,
-    rgba(10,10,14,0.683) 40%,
-    rgba(10,10,14,0.5)   50%,
-    rgba(10,10,14,0.317) 60%,
-    rgba(10,10,14,0.163) 70%,
-    rgba(10,10,14,0.058) 80%,
-    rgba(10,10,14,0.009) 90%,
-    rgba(10,10,14,0)     100%);
+  inset:0;
+  /* Two layers, one per edge. Alpha follows a smootherstep S-curve (6t^5-15t^4+10t^3)
+     rather than ramping linearly: the eye judges perceptual lightness, which is not
+     linear. A linear ramp gains 10 L* points inside its first tenth (top goes light too
+     fast) and is still visibly grey at 90% (a tail hazing over the paper). The S-curve
+     holds at both ends and moves through the middle. CSS interpolates linearly between
+     stops, hence tracing the curve by hand.
+
+     TOP - ink dissolving into the band, so the wave lines emerge from the darkness.
+     BOTTOM - paper rising to meet the act below. The band and that act are the same
+     colour, so the seam there is not a colour change at all: .actbreak clips the wave
+     field with overflow:hidden and the strokes simply stop. This fades them out before
+     the clip. Shallower than the top at 150px, because it only has to retire faint
+     lines rather than carry a full black-to-white transition; going symmetric would
+     leave the field visible in two narrow strips once the radial scrim is accounted for. */
+  background:
+    linear-gradient(180deg,
+      rgba(10,10,14,1)     0%,
+      rgba(10,10,14,0.991) 10%,
+      rgba(10,10,14,0.942) 20%,
+      rgba(10,10,14,0.837) 30%,
+      rgba(10,10,14,0.683) 40%,
+      rgba(10,10,14,0.5)   50%,
+      rgba(10,10,14,0.317) 60%,
+      rgba(10,10,14,0.163) 70%,
+      rgba(10,10,14,0.058) 80%,
+      rgba(10,10,14,0.009) 90%,
+      rgba(10,10,14,0)     100%) top / 100% 180px no-repeat,
+    linear-gradient(0deg,
+      rgba(251,250,249,1)     0%,
+      rgba(251,250,249,0.991) 10%,
+      rgba(251,250,249,0.942) 20%,
+      rgba(251,250,249,0.837) 30%,
+      rgba(251,250,249,0.683) 40%,
+      rgba(251,250,249,0.5)   50%,
+      rgba(251,250,249,0.317) 60%,
+      rgba(251,250,249,0.163) 70%,
+      rgba(251,250,249,0.058) 80%,
+      rgba(251,250,249,0.009) 90%,
+      rgba(251,250,249,0)     100%) bottom / 100% 150px no-repeat;
   z-index:2;
   pointer-events:none;
 }
@@ -852,7 +873,8 @@ footer{
   .partner{grid-template-columns:1fr; padding:44px 28px; margin:0 16px; border-radius:20px;}
   /* Dissolve shrinks with the padding so it never swallows the copy on a small screen. */
   .actbreak{padding:150px 0 88px;}
-  .actbreak::before{height:120px;}
+  /* Layer sizes scale with the band; positions carry over from the shorthand. */
+  .actbreak::before{background-size:100% 120px, 100% 100px;}
   .footer-top{grid-template-columns:1fr 1fr; row-gap:36px;}
   .wrap{padding:0 20px;}
   section{padding:80px 0;}
