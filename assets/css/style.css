@@ -414,6 +414,24 @@ section{padding:118px 0;}
   overflow:hidden;
 }
 .product__plate img{width:100%;height:100%;object-fit:contain;}
+/* For transparent cut-outs, which need no ground of their own. Perspective lives here
+   so tilt.js can rotate the image inside it. */
+.product__plate--bare{
+  background:none;
+  padding:0;
+  aspect-ratio:auto;
+  overflow:visible;
+  perspective:1100px;
+}
+.product__plate--bare img{
+  height:auto;
+  max-height:540px;
+  width:auto;
+  max-width:100%;
+  margin:0 auto;
+  filter:drop-shadow(0 30px 55px rgba(0,0,0,0.55));
+  will-change:transform;
+}
 .product__copy h2{font-size:clamp(1.9rem,3.2vw,2.6rem); margin-top:18px;}
 .product__copy > p{margin-top:16px; color:var(--on-surface-50); font-size:16.5px; max-width:440px;}
 .product__copy .btn{margin-top:32px;}

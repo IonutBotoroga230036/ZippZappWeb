@@ -116,20 +116,22 @@
     </section>
 
     <!-- THE PACK -->
-    <!-- Product shot sits on a light plate: the render ships on a light background,
-         so it needs its own ground rather than floating on ink. -->
+    <!-- This render is a transparent cut-out of the white unit, so it needs no light
+         plate: it sits straight on the ink and tilts as an object, not as a rectangle. -->
     <section id="pack" class="pack">
       <div class="wrap product">
-        <div class="product__plate">
-          <img src="assets/img/pack-black.png" alt="A ZippZapp power bank with Lightning, USB-C and micro-USB cables built into the body">
+        <div class="product__plate product__plate--bare" data-tilt>
+          <img src="assets/img/zipp_zapp_powerbank_front.webp" alt="A ZippZapp power bank with two USB-C cables and a Lightning cable built into the body">
         </div>
         <div class="product__copy">
           <h2>Three cables. One pocket.</h2>
           <p>The cables live in the pack. Pull one out, plug in, slot it back when you're done. No separate lead to forget on a table somewhere.</p>
           <ul class="spec-list">
-            <li><span>USB-C</span> Phones, tablets, handhelds</li>
-            <li><span>Lightning</span> Older iPhones and accessories</li>
-            <li><span>Micro-USB</span> Headphones, speakers, e-readers</li>
+            <li><span>2&times; USB-C</span> Phones, tablets, handhelds</li>
+            <li><span>Lightning</span> iPhones and accessories</li>
+            <li><span>8,000 mAh</span> Enough to see out a long day</li>
+            <li><span>Fast charge</span> 9V and 12V output, not just trickle</li>
+            <li><span>192 g</span> 1.5 cm thick, so it actually pockets</li>
           </ul>
           <a href="#download" class="btn btn--volt">Get the app</a>
         </div>
@@ -485,6 +487,7 @@
 </footer>
 
 <script src="assets/js/waves.js"></script>
+<script src="assets/js/tilt.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
