@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZippZapp — Power Bank Rental Network</title>
+<title>ZippZapp - Power Bank Rental Network</title>
 <meta name="description" content="Grab a charged power bank from any ZippZapp station, use it anywhere, and drop it at another. Free to host in your venue.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,17 +41,24 @@
         <div class="hero__grid">
           <div>
             <p class="eyebrow">Power bank rental network</p>
-            <h1>Charge up. Drop off. <em>Keep going.</em></h1>
-            <p class="hero__sub">Grab a fully charged pack from any ZippZapp station, use it anywhere, and drop it at a different station across town. No cables to carry, no deposit held hostage.</p>
+            <!-- Three clauses, one per line. The breaks are deliberate, not container
+                 wrapping, so the slogan holds its shape at every width. -->
+            <h1><span>Charge up.</span><span>Drop off.</span><em>Keep going.</em></h1>
+            <p class="hero__sub">Grab a charged pack from any station, use it anywhere, then drop it at any other station in the city.</p>
             <div class="hero__ctas">
               <a href="#download" class="btn btn--volt">Get the app</a>
               <a href="#how" class="btn btn--ghost-dark">How it works →</a>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- What a renter actually gets. Every figure here is checkable against the
-             product or the pricing below - none of it is a traction claim. -->
+    <!-- What a renter actually gets. Every figure is checkable against the product or
+         the pricing below; none of it is a traction claim. Sits below the hero rather
+         than inside it, so the hero stays a single message. -->
+    <section class="figures">
+      <div class="wrap">
         <div class="stats">
           <div class="stats__item">
             <div class="stats__num">20 min</div>
@@ -82,51 +89,51 @@
     <section id="how">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">How it works</p>
           <h2>Three steps. Zero cables.</h2>
           <p>Find a station, scan, and go. No account to set up and nothing held on your card.</p>
         </div>
         <div class="steps">
           <div class="step">
-            <p class="step__num">01 / SCAN</p>
+            <p class="step__num">01</p>
             <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="var(--volt)"/></svg>
             <h3>Scan &amp; grab</h3>
-            <p>A QR code on the station unlocks a fully charged pack in under two seconds — no account setup required.</p>
+            <p>A QR code on the station unlocks a fully charged pack in under two seconds. No account setup required.</p>
           </div>
           <div class="step">
-            <p class="step__num">02 / CHARGE</p>
+            <p class="step__num">02</p>
             <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="var(--volt)"/></svg>
             <h3>Power up on the go</h3>
-            <p>Three cables are built into the pack itself. Whatever you carry, one of them fits — nothing to bring, nothing to lose.</p>
+            <p>Three cables are built into the pack itself. Whatever you carry, one of them fits. Nothing to bring, nothing to lose.</p>
           </div>
           <div class="step">
-            <p class="step__num">03 / RETURN</p>
+            <p class="step__num">03</p>
             <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="var(--volt)"/></svg>
             <h3>Return anywhere</h3>
-            <p>Drop it at any station in the network — not just the one it came from. The rental closes itself out.</p>
+            <p>Drop it at any station in the network, not just the one it came from. The rental closes itself out.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- THE PACK -->
-    <!-- Product shot sits on a light plate: the render ships on a light background,
-         so it needs its own ground rather than floating on ink. -->
+    <!-- This render is a transparent cut-out of the white unit, so it needs no light
+         plate: it sits straight on the ink and tilts as an object, not as a rectangle. -->
     <section id="pack" class="pack">
       <div class="wrap product">
-        <div class="product__plate">
-          <img src="assets/img/pack-black.png" alt="A ZippZapp power bank with Lightning, USB-C and micro-USB cables built into the body">
+        <div class="product__plate product__plate--bare" data-tilt>
+          <img src="assets/img/zipp_zapp_powerbank_front.webp" alt="A ZippZapp power bank with two USB-C cables and a Lightning cable built into the body">
         </div>
         <div class="product__copy">
-          <p class="eyebrow">The pack</p>
           <h2>Three cables. One pocket.</h2>
-          <p>The cables live in the pack. Pull one out, plug in, slot it back when you're done — there is no separate lead to forget on a table somewhere.</p>
+          <p>The cables live in the pack. Pull one out, plug in, slot it back when you're done. No separate lead to forget on a table somewhere.</p>
           <ul class="spec-list">
-            <li><span>USB-C</span> Phones, tablets, handhelds</li>
-            <li><span>Lightning</span> Older iPhones and accessories</li>
-            <li><span>Micro-USB</span> Headphones, speakers, e-readers</li>
+            <li><span>2&times; USB-C</span> Phones, tablets, handhelds</li>
+            <li><span>Lightning</span> iPhones and accessories</li>
+            <li><span>8,000 mAh</span> Enough to see out a long day</li>
+            <li><span>Fast charge</span> 9V and 12V output, not just trickle</li>
+            <li><span>192 g</span> 1.5 cm thick, so it actually pockets</li>
           </ul>
-          <a href="#download" class="btn btn--volt">Find your nearest station</a>
+          <a href="#download" class="btn btn--volt">Get the app</a>
         </div>
       </div>
     </section>
@@ -142,7 +149,6 @@
     <section id="pricing">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">Rental plans</p>
           <h2>Pay for what you use</h2>
           <p>No deposits and no surprise fees. You're charged in-app the moment the pack goes back.</p>
         </div>
@@ -210,9 +216,8 @@
     <section class="why">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">Why host one</p>
           <h2>A countertop amenity that pays you back</h2>
-          <p>Not another piece of equipment to manage — the station earns, or it costs you nothing.</p>
+          <p>Not another piece of equipment to manage. The station earns, or it costs you nothing.</p>
         </div>
 
         <!-- Terms of the offer, not traction metrics. Nothing here claims how many
@@ -245,7 +250,7 @@
           <div class="value-card">
             <div class="value-card__icon"></div>
             <h3>Revenue on autopilot</h3>
-            <p>Earn a share of every rental made at your location, paid out monthly — no invoicing.</p>
+            <p>Earn a share of every rental made at your location, paid out monthly, with no invoicing.</p>
           </div>
           <div class="value-card">
             <div class="value-card__icon"></div>
@@ -272,30 +277,34 @@
     <section id="revenue">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">Where the money goes</p>
           <h2>How your share works</h2>
           <p>No leases, no hardware invoice, no minimum term.</p>
         </div>
-        <div class="steps">
-          <div class="step">
-            <p class="step__num">01 / RENTAL</p>
-            <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="var(--volt-deep)"/></svg>
-            <h3>A customer takes a pack</h3>
-            <p>They pay by the hour in the app. Nothing is charged to you, and your staff never handle a transaction.</p>
-          </div>
-          <div class="step">
-            <p class="step__num">02 / SPLIT</p>
-            <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="var(--volt-deep)"/></svg>
-            <h3>You keep 30% of it</h3>
-            <p>Your share of every rental that starts at your station is tracked automatically — including packs returned elsewhere.</p>
-          </div>
-          <div class="step">
-            <p class="step__num">03 / PAYOUT</p>
-            <svg class="step__bolt" viewBox="0 0 34 34"><polygon points="20,0 4,19 16,19 10,34 32,14 18,14" fill="var(--volt-deep)"/></svg>
-            <h3>We pay out monthly</h3>
-            <p>Straight to your account, with a per-station breakdown of what was rented and when.</p>
-          </div>
-        </div>
+        <!-- Vertical sequence, not the three-column .steps grid used in act one.
+             Same content type, different composition, so the two acts do not rhyme. -->
+        <ol class="ledger">
+          <li class="ledger__row">
+            <span class="ledger__num">01</span>
+            <div class="ledger__body">
+              <h3>A customer takes a pack</h3>
+              <p>They pay by the hour in the app. Nothing is charged to you, and your staff never handle a transaction.</p>
+            </div>
+          </li>
+          <li class="ledger__row">
+            <span class="ledger__num">02</span>
+            <div class="ledger__body">
+              <h3>You keep 30% of it</h3>
+              <p>Your share of every rental that starts at your station is tracked automatically, including packs returned elsewhere.</p>
+            </div>
+          </li>
+          <li class="ledger__row">
+            <span class="ledger__num">03</span>
+            <div class="ledger__body">
+              <h3>We pay out monthly</h3>
+              <p>Straight to your account, with a per-station breakdown of what was rented and when.</p>
+            </div>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -310,7 +319,6 @@
         <!-- Venue types rather than a city list: describes where a station fits,
              which is true today, instead of claiming coverage that does not exist yet. -->
         <div class="product__copy">
-          <p class="eyebrow">Placement</p>
           <h2>Where a station earns its counter space</h2>
           <p>A station needs a power socket and about the footprint of a card reader. It works hardest where people already sit still for a while.</p>
           <div class="city-list">
@@ -336,7 +344,7 @@
           <h2 style="margin-top:18px;">Bring ZippZapp to your venue</h2>
           <p>Cafés, bars, gyms, coworking spaces, hotels, airports. If people linger at your venue, a station belongs there.</p>
           <ul class="partner__list">
-            <li>Setup takes under 15 minutes — we install and train your team</li>
+            <li>Setup takes under 15 minutes. We install and train your team</li>
             <li>Earn up to 30% of rental revenue generated at your location</li>
             <li>Real-time dashboard so you always know what's earned</li>
             <li>Restocking and support handled entirely by ZippZapp</li>
@@ -379,7 +387,7 @@
             <h3>Request received</h3>
             <p class="form-sub">Someone from our partnerships team will reach out shortly.</p>
           </div>
-          <p class="form-note">This is a preview form — no data is submitted anywhere yet.</p>
+          <p class="form-note">This is a preview form. No data is submitted anywhere yet.</p>
         </div>
       </div>
     </section>
@@ -394,7 +402,6 @@
     <section id="faq">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">Good to know</p>
           <h2>Frequently asked questions</h2>
         </div>
 
@@ -480,6 +487,7 @@
 </footer>
 
 <script src="assets/js/waves.js"></script>
+<script src="assets/js/tilt.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
