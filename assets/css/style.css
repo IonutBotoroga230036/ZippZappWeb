@@ -563,27 +563,36 @@ section{padding:118px 0;}
 .plans__cta p{font-size:14px; color:var(--on-surface-50);}
 
 /* ---------- ACT BREAK ---------- */
-/* Full-bleed band that hands the page from renters to venue owners. Keeps its own
-   dark tokens regardless of the acts on either side. */
+/* Full-bleed band that hands the page from renters to venue owners. It carries the
+   light tokens, so the colour flip lands on exactly the same moment as the audience
+   flip rather than a section later. */
 .actbreak{
   position:relative;
-  background:var(--ink);
-  color:#fff;
-  --surface:var(--ink);
-  --on-surface:#fff;
-  --on-surface-70:rgba(255,255,255,0.72);
-  --accent:var(--volt);
+  /* --paper-dim, not --paper: a half-step off the act below it, so the band still
+     reads as its own moment instead of merging into the section it introduces. */
+  background:var(--paper-dim);
+  color:var(--ink);
+  --surface:var(--paper-dim);
+  --on-surface:var(--ink);
+  --on-surface-70:var(--ink-70);
+  --accent:var(--volt-deep);
   padding:128px 0;
   overflow:hidden;
   isolation:isolate;
   text-align:center;
 }
-.actbreak__waves{opacity:0.75;}
-/* Darkens behind the copy only, so the wave field still reads at the edges. */
+/* The wave field appears in both worlds; on paper it needs the deeper purple and a
+   lower opacity, since --volt is a light tint that washes out against white. */
+.actbreak__waves{opacity:1;}
+.actbreak__waves .js-line{
+  stroke:var(--volt-deep);
+  stroke-opacity:0.22;
+}
+/* Lightens behind the copy only, so the wave field still reads at the edges. */
 .actbreak::after{
   content:"";
   position:absolute; inset:0;
-  background:radial-gradient(ellipse 62% 70% at 50% 50%, rgba(10,10,14,0.88) 0%, rgba(10,10,14,0.55) 55%, rgba(10,10,14,0.25) 100%);
+  background:radial-gradient(ellipse 62% 70% at 50% 50%, rgba(241,239,245,0.94) 0%, rgba(241,239,245,0.72) 55%, rgba(241,239,245,0.3) 100%);
   z-index:1;
   pointer-events:none;
 }
