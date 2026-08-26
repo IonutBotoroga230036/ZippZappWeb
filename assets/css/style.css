@@ -568,18 +568,32 @@ section{padding:118px 0;}
    flip rather than a section later. */
 .actbreak{
   position:relative;
-  /* --paper-dim, not --paper: a half-step off the act below it, so the band still
-     reads as its own moment instead of merging into the section it introduces. */
-  background:var(--paper-dim);
+  /* Same paper as the act below it. The wave field is what separates the two, rather
+     than a tonal step. */
+  background:var(--paper);
   color:var(--ink);
-  --surface:var(--paper-dim);
+  --surface:var(--paper);
   --on-surface:var(--ink);
   --on-surface-70:var(--ink-70);
   --accent:var(--volt-deep);
-  padding:128px 0;
+  /* Top padding clears the 180px dissolve below, so the copy never sits on the ramp. */
+  padding:210px 0 128px;
   overflow:hidden;
   isolation:isolate;
   text-align:center;
+}
+/* Dissolves the edge shared with the dark act above. Sits over the wave field, so the
+   lines are hidden in the dark and emerge as the ground lightens - the waves arrive
+   rather than a colour smearing between two palettes.
+   rgba(...,0) rather than `transparent`: `transparent` interpolates through
+   transparent-black in some engines and smears grey through the ramp. */
+.actbreak::before{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0; height:180px;
+  background:linear-gradient(180deg, rgb(10,10,14) 0%, rgba(10,10,14,0) 100%);
+  z-index:2;
+  pointer-events:none;
 }
 /* The wave field appears in both worlds; on paper it needs the deeper purple and a
    lower opacity, since --volt is a light tint that washes out against white. */
@@ -593,13 +607,13 @@ section{padding:118px 0;}
 .actbreak::after{
   content:"";
   position:absolute; inset:0;
-  background:radial-gradient(ellipse 58% 66% at 50% 50%, rgba(241,239,245,0.95) 0%, rgba(241,239,245,0.82) 48%, rgba(241,239,245,0.1) 100%);
+  background:radial-gradient(ellipse 58% 66% at 50% 50%, rgba(251,250,249,0.95) 0%, rgba(251,250,249,0.82) 48%, rgba(251,250,249,0.1) 100%);
   z-index:1;
   pointer-events:none;
 }
 .actbreak__inner{
   position:relative;
-  z-index:2;
+  z-index:3;          /* above the dissolve at z-index 2 */
   max-width:660px;
   margin:0 auto;
 }
@@ -819,7 +833,9 @@ footer{
   .plan{border-right:none; padding-right:0; border-top:1px solid var(--rule); padding-top:30px;}
   .plan:first-child{border-top:none; padding-top:38px;}
   .partner{grid-template-columns:1fr; padding:44px 28px; margin:0 16px; border-radius:20px;}
-  .actbreak{padding:88px 0;}
+  /* Dissolve shrinks with the padding so it never swallows the copy on a small screen. */
+  .actbreak{padding:150px 0 88px;}
+  .actbreak::before{height:120px;}
   .footer-top{grid-template-columns:1fr 1fr; row-gap:36px;}
   .wrap{padding:0 20px;}
   section{padding:80px 0;}
