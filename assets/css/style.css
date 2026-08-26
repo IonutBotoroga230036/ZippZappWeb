@@ -586,13 +586,14 @@ section{padding:118px 0;}
 .actbreak__waves{opacity:1;}
 .actbreak__waves .js-line{
   stroke:var(--volt-deep);
-  stroke-opacity:0.22;
+  stroke-opacity:0.5;
 }
-/* Lightens behind the copy only, so the wave field still reads at the edges. */
+/* Lightens behind the copy only. The centre stays near-opaque so the headline keeps
+   a clean ground, while the edges fall away sharply and let the field come through. */
 .actbreak::after{
   content:"";
   position:absolute; inset:0;
-  background:radial-gradient(ellipse 62% 70% at 50% 50%, rgba(241,239,245,0.94) 0%, rgba(241,239,245,0.72) 55%, rgba(241,239,245,0.3) 100%);
+  background:radial-gradient(ellipse 58% 66% at 50% 50%, rgba(241,239,245,0.95) 0%, rgba(241,239,245,0.82) 48%, rgba(241,239,245,0.1) 100%);
   z-index:1;
   pointer-events:none;
 }
