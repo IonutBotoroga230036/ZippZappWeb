@@ -591,7 +591,24 @@ section{padding:118px 0;}
   content:"";
   position:absolute;
   top:0; left:0; right:0; height:180px;
-  background:linear-gradient(180deg, rgb(10,10,14) 0%, rgba(10,10,14,0) 100%);
+  /* Alpha follows a smootherstep S-curve (6t^5-15t^4+10t^3) rather than ramping
+     linearly. The eye judges perceptual lightness, which is non-linear: a linear ramp
+     gains 10 L* points inside its first tenth (top goes light too fast) and is still
+     visibly grey at 90% (a tail hazing over the paper). The S-curve holds near-black
+     through the first fifth and settles into full transparency early.
+     CSS interpolates linearly between stops, hence tracing the curve by hand. */
+  background:linear-gradient(180deg,
+    rgba(10,10,14,1)     0%,
+    rgba(10,10,14,0.991) 10%,
+    rgba(10,10,14,0.942) 20%,
+    rgba(10,10,14,0.837) 30%,
+    rgba(10,10,14,0.683) 40%,
+    rgba(10,10,14,0.5)   50%,
+    rgba(10,10,14,0.317) 60%,
+    rgba(10,10,14,0.163) 70%,
+    rgba(10,10,14,0.058) 80%,
+    rgba(10,10,14,0.009) 90%,
+    rgba(10,10,14,0)     100%);
   z-index:2;
   pointer-events:none;
 }
