@@ -50,6 +50,10 @@ Serves `http://localhost:8080`. `.claude/launch.json` wires this up for the prev
 
 **Muted body copy is `--ink-50` at 0.62 alpha, not 0.52.** At 0.52 it measured 3.93:1 on paper and failed WCAG AA. Measure computed colour against the real section background when changing it; do not eyeball.
 
+**Contrast sweeps must include the footer.** Several passes scanned only `.act` and `.actbreak` and so missed a footer failure at 3.77:1 that had been shipping for weeks. Query the whole document, not the acts.
+
+**Radii come from three tokens plus pills.** `--radius-sm` (10px) for chips, inputs and badges; `--radius` (18px) for cards, plates and panels; `--radius-lg` (28px) for the partner panel; `999px` for anything that reads as a pill. Do not introduce a fourth value — the system previously had both 9px and 10px doing the same job for no reason.
+
 ## Typography constraint
 
 Nikea (by Limitype) is **free for personal and commercial use** — confirmed by the project owner.

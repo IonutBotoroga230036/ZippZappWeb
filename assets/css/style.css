@@ -26,7 +26,14 @@
   --ink-70:rgba(10,10,14,0.7);
   /* 0.62, not 0.52 - at 0.52 muted body copy measured 3.93:1 on paper and failed AA. */
   --ink-50:rgba(10,10,14,0.62);
+  /* Radius system, three steps plus pills. Anything rounded picks one of these:
+     --radius-sm  small controls - chips, inputs, badges
+     --radius     cards, plates, panels
+     --radius-lg  the one oversized panel (partner)
+     999px        anything interactive that reads as a pill */
+  --radius-sm:10px;
   --radius:18px;
+  --radius-lg:28px;
   --wrap:1180px;
   --ease:cubic-bezier(.16,.84,.44,1);
   --display-font:'Nikea','Inter',sans-serif;
@@ -38,6 +45,12 @@
   --on-surface-50:var(--ink-50);
   --rule:var(--line);
   --accent:var(--volt-deep);
+  /* Two stacked shadows - soft ambient plus tighter contact - because a light product
+     on a light ground has almost no self-contrast and needs to be seated by shadow
+     alone. Tinted with ink rather than pure black. */
+  --product-shadow:
+    drop-shadow(0 18px 34px rgba(10,10,14,0.14))
+    drop-shadow(0 4px 10px rgba(10,10,14,0.08));
 }
 
 /* An act is one audience's stretch of the page. Components read the surface tokens
@@ -54,6 +67,9 @@
   --on-surface-50:rgba(255,255,255,0.55);
   --rule:var(--ink-line);
   --accent:var(--volt);
+  /* A single deep shadow is enough on ink, where the product already has strong
+     self-contrast against the ground. */
+  --product-shadow:drop-shadow(0 30px 55px rgba(0,0,0,0.55));
 }
 
 *,*::before,*::after{box-sizing:border-box;}
@@ -318,6 +334,9 @@ header{
   stroke:var(--rule);
   stroke-width:1.5;
 }
+/* Paused while off-screen. The wave fields already stop their RAF loop when scrolled
+   away; these ran permanently, which was the one place the page did not practise it. */
+.signal{content-visibility:auto; contain-intrinsic-size:auto 64px;}
 .signal path.live{
   stroke:var(--accent);
   stroke-dasharray:6 14;
@@ -429,7 +448,7 @@ section{padding:118px 0;}
   width:auto;
   max-width:100%;
   margin:0 auto;
-  filter:drop-shadow(0 30px 55px rgba(0,0,0,0.55));
+  filter:var(--product-shadow);
   will-change:transform;
 }
 .product__copy h2{font-size:clamp(1.9rem,3.2vw,2.6rem); margin-top:18px;}
@@ -487,7 +506,7 @@ section{padding:118px 0;}
   justify-content:space-between;
   padding:13px 16px;
   border:1px solid var(--rule);
-  border-radius:10px;
+  border-radius:var(--radius-sm);
   font-size:14px;
 }
 .city-chip span:last-child{
@@ -563,33 +582,95 @@ section{padding:118px 0;}
 .plans__cta p{font-size:14px; color:var(--on-surface-50);}
 
 /* ---------- ACT BREAK ---------- */
-/* Full-bleed band that hands the page from renters to venue owners. Keeps its own
-   dark tokens regardless of the acts on either side. */
+/* Full-bleed band that hands the page from renters to venue owners. It carries the
+   light tokens, so the colour flip lands on exactly the same moment as the audience
+   flip rather than a section later. */
 .actbreak{
   position:relative;
-  background:var(--ink);
-  color:#fff;
-  --surface:var(--ink);
-  --on-surface:#fff;
-  --on-surface-70:rgba(255,255,255,0.72);
-  --accent:var(--volt);
-  padding:128px 0;
+  /* Same paper as the act below it. The wave field is what separates the two, rather
+     than a tonal step. */
+  background:var(--paper);
+  color:var(--ink);
+  --surface:var(--paper);
+  --on-surface:var(--ink);
+  --on-surface-70:var(--ink-70);
+  --accent:var(--volt-deep);
+  /* Top padding clears the 180px dissolve below, so the copy never sits on the ramp. */
+  padding:210px 0 128px;
   overflow:hidden;
   isolation:isolate;
   text-align:center;
 }
-.actbreak__waves{opacity:0.75;}
-/* Darkens behind the copy only, so the wave field still reads at the edges. */
+/* Dissolves the edge shared with the dark act above. Sits over the wave field, so the
+   lines are hidden in the dark and emerge as the ground lightens - the waves arrive
+   rather than a colour smearing between two palettes.
+   rgba(...,0) rather than `transparent`: `transparent` interpolates through
+   transparent-black in some engines and smears grey through the ramp. */
+.actbreak::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  /* Two layers, one per edge. Alpha follows a smootherstep S-curve (6t^5-15t^4+10t^3)
+     rather than ramping linearly: the eye judges perceptual lightness, which is not
+     linear. A linear ramp gains 10 L* points inside its first tenth (top goes light too
+     fast) and is still visibly grey at 90% (a tail hazing over the paper). The S-curve
+     holds at both ends and moves through the middle. CSS interpolates linearly between
+     stops, hence tracing the curve by hand.
+
+     TOP - ink dissolving into the band, so the wave lines emerge from the darkness.
+     BOTTOM - paper rising to meet the act below. The band and that act are the same
+     colour, so the seam there is not a colour change at all: .actbreak clips the wave
+     field with overflow:hidden and the strokes simply stop. This fades them out before
+     the clip. Shallower than the top at 150px, because it only has to retire faint
+     lines rather than carry a full black-to-white transition; going symmetric would
+     leave the field visible in two narrow strips once the radial scrim is accounted for. */
+  background:
+    linear-gradient(180deg,
+      rgba(10,10,14,1)     0%,
+      rgba(10,10,14,0.991) 10%,
+      rgba(10,10,14,0.942) 20%,
+      rgba(10,10,14,0.837) 30%,
+      rgba(10,10,14,0.683) 40%,
+      rgba(10,10,14,0.5)   50%,
+      rgba(10,10,14,0.317) 60%,
+      rgba(10,10,14,0.163) 70%,
+      rgba(10,10,14,0.058) 80%,
+      rgba(10,10,14,0.009) 90%,
+      rgba(10,10,14,0)     100%) top / 100% 180px no-repeat,
+    linear-gradient(0deg,
+      rgba(251,250,249,1)     0%,
+      rgba(251,250,249,0.991) 10%,
+      rgba(251,250,249,0.942) 20%,
+      rgba(251,250,249,0.837) 30%,
+      rgba(251,250,249,0.683) 40%,
+      rgba(251,250,249,0.5)   50%,
+      rgba(251,250,249,0.317) 60%,
+      rgba(251,250,249,0.163) 70%,
+      rgba(251,250,249,0.058) 80%,
+      rgba(251,250,249,0.009) 90%,
+      rgba(251,250,249,0)     100%) bottom / 100% 150px no-repeat;
+  z-index:2;
+  pointer-events:none;
+}
+/* The wave field appears in both worlds; on paper it needs the deeper purple and a
+   lower opacity, since --volt is a light tint that washes out against white. */
+.actbreak__waves{opacity:1;}
+.actbreak__waves .js-line{
+  stroke:var(--volt-deep);
+  stroke-opacity:0.5;
+}
+/* Lightens behind the copy only. The centre stays near-opaque so the headline keeps
+   a clean ground, while the edges fall away sharply and let the field come through. */
 .actbreak::after{
   content:"";
   position:absolute; inset:0;
-  background:radial-gradient(ellipse 62% 70% at 50% 50%, rgba(10,10,14,0.88) 0%, rgba(10,10,14,0.55) 55%, rgba(10,10,14,0.25) 100%);
+  background:radial-gradient(ellipse 58% 66% at 50% 50%, rgba(251,250,249,0.95) 0%, rgba(251,250,249,0.82) 48%, rgba(251,250,249,0.1) 100%);
   z-index:1;
   pointer-events:none;
 }
 .actbreak__inner{
   position:relative;
-  z-index:2;
+  z-index:3;          /* above the dissolve at z-index 2 */
   max-width:660px;
   margin:0 auto;
 }
@@ -602,7 +683,7 @@ section{padding:118px 0;}
 .partner{
   background:var(--volt-light);
   color:var(--ink);
-  border-radius:28px;
+  border-radius:var(--radius-lg);
   margin:0 32px;
   padding:76px;
   display:grid;
@@ -627,7 +708,7 @@ section{padding:118px 0;}
 }
 .form-card{
   background:#fff;
-  border-radius:18px;
+  border-radius:var(--radius);
   padding:36px;
   box-shadow:0 20px 60px -20px rgba(76,47,209,0.25);
   position:relative;
@@ -646,7 +727,7 @@ section{padding:118px 0;}
 .field input, .field select{
   width:100%;
   padding:12px 14px;
-  border-radius:9px;
+  border-radius:var(--radius-sm);
   border:1px solid var(--line);
   font-family:inherit;
   font-size:14.5px;
@@ -748,7 +829,8 @@ footer{
   font-size:12px;
   letter-spacing:0.08em;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.45);
+  /* 0.55, not 0.45: at 0.45 this measured exactly 4.50:1, passing AA with no margin. */
+  color:rgba(255,255,255,0.55);
   margin-bottom:18px;
   font-weight:500;
 }
@@ -759,7 +841,7 @@ footer{
 .app-badge{
   display:flex;align-items:center;gap:10px;
   border:1px solid var(--ink-line);
-  border-radius:10px;
+  border-radius:var(--radius-sm);
   padding:10px 14px;
   font-size:13px;
   color:#fff;
@@ -773,7 +855,8 @@ footer{
   align-items:center;
   padding-top:28px;
   font-size:13px;
-  color:rgba(255,255,255,0.4);
+  /* 0.55, not 0.4: at 0.4 this measured 3.77:1 and failed WCAG AA. */
+  color:rgba(255,255,255,0.55);
   flex-wrap:wrap;
   gap:14px;
 }
@@ -808,8 +891,11 @@ footer{
   .plans{grid-template-columns:1fr; row-gap:34px;}
   .plan{border-right:none; padding-right:0; border-top:1px solid var(--rule); padding-top:30px;}
   .plan:first-child{border-top:none; padding-top:38px;}
-  .partner{grid-template-columns:1fr; padding:44px 28px; margin:0 16px; border-radius:20px;}
-  .actbreak{padding:88px 0;}
+  .partner{grid-template-columns:1fr; padding:44px 28px; margin:0 16px; border-radius:var(--radius);}
+  /* Dissolve shrinks with the padding so it never swallows the copy on a small screen. */
+  .actbreak{padding:150px 0 88px;}
+  /* Layer sizes scale with the band; positions carry over from the shorthand. */
+  .actbreak::before{background-size:100% 120px, 100% 100px;}
   .footer-top{grid-template-columns:1fr 1fr; row-gap:36px;}
   .wrap{padding:0 20px;}
   section{padding:80px 0;}

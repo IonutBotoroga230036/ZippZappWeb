@@ -7,8 +7,10 @@ function initTilt(container){
   const el = container.querySelector('img, [data-tilt-target]');
   if(!el) return;
 
-  const MAX_DEG = 9;       // rotation limit on each axis
-  const EASE = 0.12;       // how quickly the current angle chases the target
+  // Per-instance, so a heavy object can be given less travel and more lag than a light
+  // one. Defaults match the power bank, which is small and responsive.
+  const MAX_DEG = parseFloat(container.dataset.tiltMax)  || 9;
+  const EASE    = parseFloat(container.dataset.tiltEase) || 0.12;
   const REST_EPSILON = 0.01;
 
   const target = { x:0, y:0 };
@@ -21,8 +23,11 @@ function initTilt(container){
     if(!r.width || !r.height) return;
     const nx = (clientX - r.left) / r.width  - 0.5;   // -0.5 .. 0.5
     const ny = (clientY - r.top)  / r.height - 0.5;
-    target.y =  nx * 2 * MAX_DEG;   // horizontal travel spins around the Y axis
-    target.x = -ny * 2 * MAX_DEG;   // vertical travel tips around the X axis
+    // Clamped, so MAX_DEG is a real limit rather than just a scale factor. A pointer
+    // reported outside the box would otherwise drive the rotation far past it.
+    const clamp = v => Math.max(-MAX_DEG, Math.min(MAX_DEG, v));
+    target.y = clamp( nx * 2 * MAX_DEG);   // horizontal travel spins around the Y axis
+    target.x = clamp(-ny * 2 * MAX_DEG);   // vertical travel tips around the X axis
     start();
   }
 
