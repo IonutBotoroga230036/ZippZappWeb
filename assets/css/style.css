@@ -45,6 +45,12 @@
   --on-surface-50:var(--ink-50);
   --rule:var(--line);
   --accent:var(--volt-deep);
+  /* Two stacked shadows - soft ambient plus tighter contact - because a light product
+     on a light ground has almost no self-contrast and needs to be seated by shadow
+     alone. Tinted with ink rather than pure black. */
+  --product-shadow:
+    drop-shadow(0 18px 34px rgba(10,10,14,0.14))
+    drop-shadow(0 4px 10px rgba(10,10,14,0.08));
 }
 
 /* An act is one audience's stretch of the page. Components read the surface tokens
@@ -61,6 +67,9 @@
   --on-surface-50:rgba(255,255,255,0.55);
   --rule:var(--ink-line);
   --accent:var(--volt);
+  /* A single deep shadow is enough on ink, where the product already has strong
+     self-contrast against the ground. */
+  --product-shadow:drop-shadow(0 30px 55px rgba(0,0,0,0.55));
 }
 
 *,*::before,*::after{box-sizing:border-box;}
@@ -439,7 +448,7 @@ section{padding:118px 0;}
   width:auto;
   max-width:100%;
   margin:0 auto;
-  filter:drop-shadow(0 30px 55px rgba(0,0,0,0.55));
+  filter:var(--product-shadow);
   will-change:transform;
 }
 .product__copy h2{font-size:clamp(1.9rem,3.2vw,2.6rem); margin-top:18px;}
