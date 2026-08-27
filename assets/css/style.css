@@ -346,12 +346,19 @@ header{
 }
 /* Every dasharray sums to the same 480-unit period, so one shared offset of two full
    periods loops seamlessly for all of them. Only the dash-to-gap split varies, which is
-   what gives the strands their different lengths. */
-.strand:nth-child(1){transform:translateY(-6px); stroke-dasharray:150 330; stroke-opacity:0.34; animation-duration:11s;}
-.strand:nth-child(2){transform:translateY(-3px); stroke-dasharray:90 390;  stroke-opacity:0.26; animation-duration:8s;  animation-delay:-3s;}
-.strand:nth-child(3){transform:translateY(0);    stroke-dasharray:210 270; stroke-opacity:0.40; animation-duration:13s; animation-delay:-6s;}
-.strand:nth-child(4){transform:translateY(4px);  stroke-dasharray:60 420;  stroke-opacity:0.22; animation-duration:7s;  animation-delay:-1s;}
-.strand:nth-child(5){transform:translateY(7px);  stroke-dasharray:120 360; stroke-opacity:0.30; animation-duration:15s; animation-delay:-9s;}
+   what gives the strands their different lengths. Stroke width is uniform; the two
+   continuous strands are held back by opacity instead, since an unbroken line reads far
+   stronger than a dashed one at the same weight.
+   Strands 3 and 6 carry no dash pattern: they are the spine the dashed strands travel
+   along, and dashoffset does nothing without dashes, so they are inert by construction. */
+.strand:nth-child(1){transform:translateY(-10px); stroke-dasharray:150 330; stroke-opacity:0.30; animation-duration:11s;}
+.strand:nth-child(2){transform:translateY(-6px);  stroke-dasharray:90 390;  stroke-opacity:0.24; animation-duration:8s;  animation-delay:-3s;}
+.strand:nth-child(3){transform:translateY(-3px);  stroke-dasharray:none;    stroke-opacity:0.16; animation:none;}
+.strand:nth-child(4){transform:translateY(-1px);  stroke-dasharray:210 270; stroke-opacity:0.38; animation-duration:13s; animation-delay:-6s;}
+.strand:nth-child(5){transform:translateY(2px);   stroke-dasharray:60 420;  stroke-opacity:0.22; animation-duration:7s;  animation-delay:-1s;}
+.strand:nth-child(6){transform:translateY(4px);   stroke-dasharray:none;    stroke-opacity:0.13; animation:none;}
+.strand:nth-child(7){transform:translateY(7px);   stroke-dasharray:120 360; stroke-opacity:0.28; animation-duration:15s; animation-delay:-9s;}
+.strand:nth-child(8){transform:translateY(10px);  stroke-dasharray:180 300; stroke-opacity:0.20; animation-duration:9.5s; animation-delay:-4s;}
 @keyframes strandflow{ to{ stroke-dashoffset:-960; } }
 
 /* ---------- SECTION shared ---------- */
