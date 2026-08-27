@@ -604,7 +604,11 @@ section{padding:118px 0;}
    uncovers the panel. Removing the clip-path silently breaks the whole effect. */
 .reveal{
   position:relative;
-  height:100dvh;
+  /* Taller than the panel by 70vh. That excess is the hold: while the wrapper still
+     covers the whole viewport, the panel is fully uncovered and nothing is clipped, so
+     the copy simply sits there and reads. At equal heights the panel is fully open at
+     exactly one scroll position and the entry wipe runs straight into the exit wipe. */
+  height:170dvh;
   clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 /* Full-bleed band that hands the page from renters to venue owners. It carries the
