@@ -215,10 +215,15 @@
 
   <!-- ============================================================
        ACT BREAK - hands the page from renters to venue owners.
-       Second wave field; the ground turns from ink to paper here.
+
+       Curtain reveal: .reveal carries a clip-path, which makes it a containing
+       block for the fixed panel inside it. The panel pins to the viewport but
+       can only paint within .reveal's box, so scrolling grows that box's slice
+       and uncovers the panel from behind act one. No JS involved.
        ============================================================ -->
+  <div class="reveal">
   <aside class="actbreak" id="venues">
-    <div class="waves-mount actbreak__waves" data-waves></div>
+    <div class="waves-mount actbreak__waves" data-waves data-waves-observe=".reveal"></div>
     <div class="wrap actbreak__inner">
       <p class="eyebrow">For venues</p>
       <h2>Got a counter people sit at?</h2>
@@ -226,6 +231,7 @@
       <a href="#partner" class="btn btn--volt">See what hosting pays →</a>
     </div>
   </aside>
+  </div>
 
   <!-- ============================================================
        ACT TWO - VENUE OWNERS. Paper ground; the business case.

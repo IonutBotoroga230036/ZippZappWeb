@@ -598,11 +598,19 @@ section{padding:118px 0;}
 .plans__cta p{font-size:14px; color:var(--on-surface-50);}
 
 /* ---------- ACT BREAK ---------- */
+/* Curtain reveal. The clip-path is doing structural work, not visual: it makes
+   .reveal a containing block for the fixed panel inside it, so the panel pins to
+   the viewport yet can only paint within this box. Scrolling grows the box and
+   uncovers the panel. Removing the clip-path silently breaks the whole effect. */
+.reveal{
+  position:relative;
+  height:100dvh;
+  clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
 /* Full-bleed band that hands the page from renters to venue owners. It carries the
    light tokens, so the colour flip lands on exactly the same moment as the audience
    flip rather than a section later. */
 .actbreak{
-  position:relative;
   /* Same paper as the act below it. The wave field is what separates the two, rather
      than a tonal step. */
   background:var(--paper);
@@ -611,60 +619,47 @@ section{padding:118px 0;}
   --on-surface:var(--ink);
   --on-surface-70:var(--ink-70);
   --accent:var(--volt-deep);
-  /* Top padding clears the 180px dissolve below, so the copy never sits on the ramp. */
-  padding:210px 0 128px;
+  /* Pinned to the viewport and clipped by .reveal above, which is what produces the
+     curtain. Viewport-height with the copy centred, rather than padded off a ramp
+     that no longer exists. */
+  position:fixed;
+  bottom:0; left:0;
+  width:100%;
+  height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   overflow:hidden;
   isolation:isolate;
   text-align:center;
 }
-/* Dissolves the edge shared with the dark act above. Sits over the wave field, so the
-   lines are hidden in the dark and emerge as the ground lightens - the waves arrive
-   rather than a colour smearing between two palettes.
-   rgba(...,0) rather than `transparent`: `transparent` interpolates through
-   transparent-black in some engines and smears grey through the ramp. */
+/* Fades the wave strands out before .actbreak clips them with overflow:hidden at its
+   bottom edge. The band and the act below share one colour, so that seam was never a
+   colour change - it was the strokes simply stopping.
+
+   The matching ink layer at the top edge is gone: the curtain reveal replaces it. Act
+   one covers this panel and lifts away, so there is no edge left to dissolve.
+
+   Alpha follows a smootherstep S-curve (6t^5-15t^4+10t^3) rather than ramping linearly,
+   because the eye judges perceptual lightness, which is not linear; a linear fade leaves
+   a visible edge where it begins. rgba(...,0) rather than `transparent`, which
+   interpolates through transparent-black in some engines and smears grey. */
 .actbreak::before{
   content:"";
   position:absolute;
   inset:0;
-  /* Two layers, one per edge. Alpha follows a smootherstep S-curve (6t^5-15t^4+10t^3)
-     rather than ramping linearly: the eye judges perceptual lightness, which is not
-     linear. A linear ramp gains 10 L* points inside its first tenth (top goes light too
-     fast) and is still visibly grey at 90% (a tail hazing over the paper). The S-curve
-     holds at both ends and moves through the middle. CSS interpolates linearly between
-     stops, hence tracing the curve by hand.
-
-     TOP - ink dissolving into the band, so the wave lines emerge from the darkness.
-     BOTTOM - paper rising to meet the act below. The band and that act are the same
-     colour, so the seam there is not a colour change at all: .actbreak clips the wave
-     field with overflow:hidden and the strokes simply stop. This fades them out before
-     the clip. Shallower than the top at 150px, because it only has to retire faint
-     lines rather than carry a full black-to-white transition; going symmetric would
-     leave the field visible in two narrow strips once the radial scrim is accounted for. */
-  background:
-    linear-gradient(180deg,
-      rgba(10,10,14,1)     0%,
-      rgba(10,10,14,0.991) 10%,
-      rgba(10,10,14,0.942) 20%,
-      rgba(10,10,14,0.837) 30%,
-      rgba(10,10,14,0.683) 40%,
-      rgba(10,10,14,0.5)   50%,
-      rgba(10,10,14,0.317) 60%,
-      rgba(10,10,14,0.163) 70%,
-      rgba(10,10,14,0.058) 80%,
-      rgba(10,10,14,0.009) 90%,
-      rgba(10,10,14,0)     100%) top / 100% 180px no-repeat,
-    linear-gradient(0deg,
-      rgba(251,250,249,1)     0%,
-      rgba(251,250,249,0.991) 10%,
-      rgba(251,250,249,0.942) 20%,
-      rgba(251,250,249,0.837) 30%,
-      rgba(251,250,249,0.683) 40%,
-      rgba(251,250,249,0.5)   50%,
-      rgba(251,250,249,0.317) 60%,
-      rgba(251,250,249,0.163) 70%,
-      rgba(251,250,249,0.058) 80%,
-      rgba(251,250,249,0.009) 90%,
-      rgba(251,250,249,0)     100%) bottom / 100% 150px no-repeat;
+  background:linear-gradient(0deg,
+    rgba(251,250,249,1)     0%,
+    rgba(251,250,249,0.991) 10%,
+    rgba(251,250,249,0.942) 20%,
+    rgba(251,250,249,0.837) 30%,
+    rgba(251,250,249,0.683) 40%,
+    rgba(251,250,249,0.5)   50%,
+    rgba(251,250,249,0.317) 60%,
+    rgba(251,250,249,0.163) 70%,
+    rgba(251,250,249,0.058) 80%,
+    rgba(251,250,249,0.009) 90%,
+    rgba(251,250,249,0)     100%) bottom / 100% 150px no-repeat;
   z-index:2;
   pointer-events:none;
 }
@@ -908,10 +903,20 @@ footer{
   .plan{border-right:none; padding-right:0; border-top:1px solid var(--rule); padding-top:30px;}
   .plan:first-child{border-top:none; padding-top:38px;}
   .partner{grid-template-columns:1fr; padding:44px 28px; margin:0 16px; border-radius:var(--radius);}
-  /* Dissolve shrinks with the padding so it never swallows the copy on a small screen. */
-  .actbreak{padding:150px 0 88px;}
-  /* Layer sizes scale with the band; positions carry over from the shorthand. */
-  .actbreak::before{background-size:100% 120px, 100% 100px;}
+  /* Curtain reveal is desktop only. Two reasons, both real. Whether clip-path
+     establishes a containing block for fixed descendants has historically been
+     unreliable on iOS Safari, and this sidesteps that rather than betting on it. And
+     although the reveal is scroll-driven rather than time-animated, it holds the panel
+     still while everything around it moves, which is parallax-adjacent. Falls back to
+     the static band the page had before. */
+  .reveal{height:auto; clip-path:none;}
+  .actbreak{
+    position:static;
+    height:auto;
+    display:block;
+    padding:150px 0 88px;
+  }
+  .actbreak::before{background-size:100% 100px;}
   .footer-top{grid-template-columns:1fr 1fr; row-gap:36px;}
   .wrap{padding:0 20px;}
   section{padding:80px 0;}
@@ -922,4 +927,16 @@ footer{
   .city-list{grid-template-columns:1fr;}
   .stats{grid-template-columns:1fr; row-gap:20px;}
   .stats__item{border-left:none; padding-left:0;}
+}
+
+/* Same fallback under reduced motion: the reveal holds the panel still while the page
+   moves around it, which is parallax-adjacent even though nothing is time-animated. */
+@media (prefers-reduced-motion: reduce){
+  .reveal{height:auto; clip-path:none;}
+  .actbreak{
+    position:static;
+    height:auto;
+    display:block;
+    padding:150px 0 128px;
+  }
 }
