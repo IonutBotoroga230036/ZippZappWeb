@@ -52,6 +52,8 @@ Serves `http://localhost:8080`. `.claude/launch.json` wires this up for the prev
 
 **Contrast sweeps must include the footer.** Several passes scanned only `.act` and `.actbreak` and so missed a footer failure at 3.77:1 that had been shipping for weeks. Query the whole document, not the acts.
 
+**Every divider strand's `stroke-dasharray` must sum to 480.** The strands share one `@keyframes` that offsets `stroke-dashoffset` by `-960`, exactly two periods. Vary the dash-to-gap ratio to change strand length — `150 330`, `90 390`, `210 270` — but never the sum. A strand whose period does not divide the offset visibly jumps every time the animation loops. The two spine strands carry `stroke-dasharray:none` and are exempt; with no dashes, `dashoffset` does nothing, so they are static by construction.
+
 **Radii come from three tokens plus pills.** `--radius-sm` (10px) for chips, inputs and badges; `--radius` (18px) for cards, plates and panels; `--radius-lg` (28px) for the partner panel; `999px` for anything that reads as a pill. Do not introduce a fourth value — the system previously had both 9px and 10px doing the same job for no reason.
 
 ## Typography constraint
