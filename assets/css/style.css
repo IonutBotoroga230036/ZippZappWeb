@@ -329,21 +329,30 @@ header{
   position:absolute; left:0; top:50%; transform:translateY(-50%);
   width:100%; height:34px;
 }
-.signal path{
-  fill:none;
-  stroke:var(--rule);
-  stroke-width:1.5;
-}
-/* Paused while off-screen. The wave fields already stop their RAF loop when scrolled
-   away; these ran permanently, which was the one place the page did not practise it. */
+/* Paused while off-screen, matching the wave fields, which stop their RAF loop when
+   scrolled away. */
 .signal{content-visibility:auto; contain-intrinsic-size:auto 64px;}
-.signal path.live{
+
+/* Strands: several copies of one curve, stacked at slightly different heights and
+   flowing left to right. Long dash plus longer gap gives discrete strands rather than
+   dots; per-strand duration means they slide past each other instead of moving as one
+   rigid block. Colour comes from --accent, so each act tints them automatically. */
+.strand{
+  fill:none;
   stroke:var(--accent);
-  stroke-dasharray:6 14;
-  animation:signalflow 5s linear infinite;
-  opacity:0.55;
+  stroke-width:1.2;
+  vector-effect:non-scaling-stroke;
+  animation:strandflow 9s linear infinite;
 }
-@keyframes signalflow{ to{ stroke-dashoffset:-400; } }
+/* Every dasharray sums to the same 480-unit period, so one shared offset of two full
+   periods loops seamlessly for all of them. Only the dash-to-gap split varies, which is
+   what gives the strands their different lengths. */
+.strand:nth-child(1){transform:translateY(-6px); stroke-dasharray:150 330; stroke-opacity:0.34; animation-duration:11s;}
+.strand:nth-child(2){transform:translateY(-3px); stroke-dasharray:90 390;  stroke-opacity:0.26; animation-duration:8s;  animation-delay:-3s;}
+.strand:nth-child(3){transform:translateY(0);    stroke-dasharray:210 270; stroke-opacity:0.40; animation-duration:13s; animation-delay:-6s;}
+.strand:nth-child(4){transform:translateY(4px);  stroke-dasharray:60 420;  stroke-opacity:0.22; animation-duration:7s;  animation-delay:-1s;}
+.strand:nth-child(5){transform:translateY(7px);  stroke-dasharray:120 360; stroke-opacity:0.30; animation-duration:15s; animation-delay:-9s;}
+@keyframes strandflow{ to{ stroke-dashoffset:-960; } }
 
 /* ---------- SECTION shared ---------- */
 section{padding:118px 0;}

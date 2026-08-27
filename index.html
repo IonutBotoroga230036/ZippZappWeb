@@ -12,6 +12,15 @@
 </head>
 <body>
 
+<!-- Divider curve, defined once and referenced by every .signal below. The two
+     variants alternate down the page so consecutive dividers mirror each other. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <defs>
+    <path id="sig-crest-up"   d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20"/>
+    <path id="sig-crest-down" d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20"/>
+  </defs>
+</svg>
+
 <header>
   <div class="wrap nav">
     <a href="#top" class="nav__logo"><img src="assets/img/Long_Logo_Waves.png" alt="ZippZapp"></a>
@@ -81,8 +90,11 @@
     </section>
 
     <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
-      <path d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
-      <path class="live" d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
     </svg></div>
 
     <!-- HOW IT WORKS -->
@@ -138,8 +150,11 @@
     </section>
 
     <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
-      <path d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
-      <path class="live" d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
     </svg></div>
 
     <!-- PRICING -->
@@ -266,8 +281,11 @@
     </section>
 
     <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
-      <path d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
-      <path class="live" d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
     </svg></div>
 
     <!-- REVENUE -->
@@ -308,8 +326,11 @@
     </section>
 
     <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
-      <path d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
-      <path class="live" d="M0,20 Q150,36 300,20 T600,20 T900,20 T1200,20" />
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
+      <use class="strand" href="#sig-crest-down"/>
     </svg></div>
 
     <!-- PLACEMENT -->
@@ -394,8 +415,11 @@
     </section>
 
     <div class="signal"><svg viewBox="0 0 1200 40" preserveAspectRatio="none">
-      <path d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
-      <path class="live" d="M0,20 Q150,4 300,20 T600,20 T900,20 T1200,20" />
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
+      <use class="strand" href="#sig-crest-up"/>
     </svg></div>
 
     <!-- FAQ -->
