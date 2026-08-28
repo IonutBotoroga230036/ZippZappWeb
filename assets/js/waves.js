@@ -245,11 +245,16 @@ function initWaveField(container){
   container.addEventListener('touchmove', onTouchMove, { passive:true });
 
   // Stop burning frames on a field nobody can see once it scrolls off screen.
-  if('IntersectionObserver' in window){
+  // A mount inside a position:fixed panel is always geometrically in the viewport, so
+  // observing it directly would report intersecting forever and the loop would never
+  // pause. data-waves-observe lets such a mount name an element that does scroll.
+  if("IntersectionObserver" in window){
+    const sel = container.dataset.wavesObserve;
+    const watched = (sel && document.querySelector(sel)) || container;
     new IntersectionObserver(entries=>{
       visible = entries[0].isIntersecting;
       if(visible) start();
-    }, { threshold:0 }).observe(container);
+    }, { threshold:0 }).observe(watched);
   }
 
   init();
