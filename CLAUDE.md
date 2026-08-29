@@ -14,9 +14,11 @@ Static HTML/CSS/JS. **No build step, no framework, no package manager.** Files a
 index.html            single page, two audience acts
 assets/css/style.css  all styling, token-driven
 assets/js/waves.js    initWaveField() + makeNoise2D; binds to every [data-waves]
+assets/js/tilt.js     initTilt(); pointer-driven 3D tilt on every [data-tilt]
 assets/js/main.js     FAQ accordion, partner form, mobile nav
 assets/fonts/         NIKEA.woff2 (used) + NIKEA.otf (source)
-assets/img/           logo PNGs + pack-black.png / pack-white.png
+assets/img/           logo PNGs + the two product renders (.webp) the page uses;
+                      pack-black.png / pack-white.png are superseded and unreferenced
 versions/             version_1/2/3.html — original prototypes, archived reference only
 tools/serve.ps1       local static server
 ```
@@ -39,12 +41,27 @@ Serves `http://localhost:8080`. `.claude/launch.json` wires this up for the prev
 
 **Acts flip design tokens; components never hardcode colour.** `.act--dark` and `.act--light` redefine `--surface`, `--on-surface`, `--on-surface-70/50`, `--rule` and `--accent`. Components read *those*, so the same component renders correctly in either act. This is load-bearing, not tidiness: `.steps`, `.section-head`, `.faq-q`, `.eyebrow` and `.stats` all appear in **both** acts. Adding a component that hardcodes `var(--ink)` or `#fff` will break the moment it moves act.
 
-`.actbreak` sets its own dark tokens locally so it stays dark regardless of the acts either side of it.
+`.actbreak` sets its own tokens locally — paper surface, ink text, `--volt-deep` accent — so it renders on light ground regardless of the acts either side of it. It is the same paper as act two; what separates the two is the wave field, not a tonal step.
+
+**The act break is a curtain reveal that releases into act two's hero.** `.reveal` is pulled up under act one's last screenful by `margin-top:-100dvh`, and `.actbreak` inside it is `position:sticky; top:0`. Act one carries `position:relative; z-index:1` and paints over it, so scrolling lifts act one away and uncovers a stationary panel; the panel then unpins and scrolls on as act two's hero. The whole thing is CSS — no JS, no scroll listener.
+
+**`.reveal`'s height must stay exactly `100dvh` more than the overlap its negative margin creates.** At `height:200dvh` / `margin-top:-100dvh`, the panel unpins on precisely the frame act one's bottom edge clears the viewport, so the curtain finishing and the release are the same moment. That coincidence falls out of the geometry rather than a tuned number, which is why it must be maintained as a pair: raising `height` alone reintroduces a hold with the copy welded to the viewport — measured at 450px, unmoving, across 1530px of scroll before this was replaced — and lowering it unpins the panel while act one is still lifting away.
+
+**The band's `id` belongs on `.reveal`, not the panel.** An `id` on a pinned element resolves to wherever the viewport happens to be, which is what made the "For venues" nav link a silent no-op for as long as the panel was `position:fixed`. `.reveal` carries `scroll-margin-top:-100dvh` to land the jump on the fully uncovered panel; the value is negative because `scroll-margin` grows the target box upward, so a positive one lands it a full screen early.
+
+Both fallbacks (`max-width:900px` and `prefers-reduced-motion`) must reset `margin-top:0` alongside `height:auto`. Resetting only the height leaves the wrapper pulled up over the pricing section.
 
 **Wave fields are instantiated per element.** `waves.js` exposes `initWaveField(mount)` and calls it for every `[data-waves]`. There are currently two (hero, act break); adding a third is a markup change only. Each field:
 - pauses its RAF loop via `IntersectionObserver` when scrolled out of view — verified that only the visible one runs
 - renders exactly one static frame under `prefers-reduced-motion` and never schedules again
 - tracks the cursor in **viewport** coordinates (never add `scrollY` — that was a v3 bug that made the cursor hotspot drift on scroll)
+
+**Product imagery tilts toward the cursor, per element.** `tilt.js` binds `initTilt()` to every `[data-tilt]` container and rotates the `img` (or `[data-tilt-target]`) inside it. Like the wave fields, it is instantiated per element and adding another is a markup change only. Its constraints:
+- travel and lag are per-instance via `data-tilt-max` / `data-tilt-ease`, because a heavy object should move less and lag more than a light one — the pack uses the 9°/0.12 defaults, the kiosk is dialled down to 5°/0.08
+- rotation is **clamped** to `MAX_DEG`, not merely scaled by it; a pointer reported outside the box would otherwise drive it far past the limit
+- the RAF loop stops once the tilt settles flat, and clears the inline `transform` so the element goes back to CSS control — do not leave a transform pinned at rest
+- it binds nothing at all under `prefers-reduced-motion`, or on anything without `(hover:hover) and (pointer:fine)`; touch gets the static image by design
+- pointer coordinates are **viewport** coordinates measured against a live `getBoundingClientRect()` — the same rule as the wave fields, and for the same reason
 
 **Colour is single-source.** `--volt-rgb` is the one place the brand purple is defined; `--volt` and `--volt-tint` derive from it. Do not write a literal `rgba(183,148,255,…)` anywhere — the v3 prototype had a recolour go stale exactly that way.
 
@@ -68,7 +85,8 @@ Everything on the page must be true. The v3 prototype shipped invented traction 
 
 ## Known gaps
 
-- `pack-black.png` / `pack-white.png` are **product renders standing in for real photography**, which is blocked on physical devices being ordered. The slots are fixed-aspect `.product__plate` containers referenced once per act, so swapping them is a file drop, not a layout change. Showing both finishes implies two SKUs exist — worth confirming.
-- There is no photography of a station *in situ*, which is the biggest remaining gap on the venue side.
+- **Both product images are renders, not photographs.** `zipp_zapp_powerbank_front.webp` (act one) and `zippzapp_powerbank_kiosk_transparent.webp` (act two) are CG — confirmed by the project owner. Real photography is still blocked on physical devices being ordered. The slots are `.product__plate--bare` containers referenced once per act, so swapping them is a file drop, not a layout change.
+- **There is still no photography of a station *in situ*** — a kiosk render on a blank ground is not a station in a real café, and that remains the biggest gap on the venue side. Do not treat the kiosk render as closing it.
+- `pack-black.png` / `pack-white.png` are the earlier stand-ins and are now referenced nowhere in HTML, CSS or JS. They are kept as files only; delete or reinstate deliberately rather than reaching for them by habit.
 - The partner form has no backend and says so on the page.
 - Every "Get the app" CTA anchors to `#download` in the footer — there are no real store links yet.

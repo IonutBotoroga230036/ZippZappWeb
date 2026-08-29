@@ -216,14 +216,18 @@
   <!-- ============================================================
        ACT BREAK - hands the page from renters to venue owners.
 
-       Curtain reveal: .reveal carries a clip-path, which makes it a containing
-       block for the fixed panel inside it. The panel pins to the viewport but
-       can only paint within .reveal's box, so scrolling grows that box's slice
-       and uncovers the panel from behind act one. No JS involved.
+       Curtain reveal: a negative margin pulls .reveal up underneath act one's last
+       screenful, and the panel inside it is sticky. Act one paints on top and slides
+       away, uncovering the panel; the panel unpins on exactly the frame act one leaves
+       the viewport, and scrolls on as act two's hero. No JS involved.
+
+       #venues sits on .reveal rather than the panel: an id on a pinned element resolves
+       to wherever the viewport happens to be, which made the nav link a no-op. .reveal
+       carries a scroll-margin-top that lands the jump on the uncovered panel.
        ============================================================ -->
-  <div class="reveal">
-  <aside class="actbreak" id="venues">
-    <div class="waves-mount actbreak__waves" data-waves data-waves-observe=".reveal"></div>
+  <div class="reveal" id="venues">
+  <aside class="actbreak">
+    <div class="waves-mount actbreak__waves" data-waves></div>
     <div class="wrap actbreak__inner">
       <p class="eyebrow">For venues</p>
       <h2>Got a counter people sit at?</h2>
