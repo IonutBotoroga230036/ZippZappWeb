@@ -12,6 +12,10 @@ param(
   # drawn, 1 = flatten it to a single hue. The source art runs 235 to 274 degrees,
   # straddling the brand's 251-260 rather than sitting on it, which reads blue next to
   # the hero waves. At 0.55 the ends land at 246 and 263, which is what is committed.
+  # Range-checked because an out-of-range value fails silently rather than loudly: at 2
+  # the factor goes negative and every disc hue is mirrored about the target, inverting
+  # the gradient while the script still reports success.
+  [ValidateRange(0.0, 1.0)]
   [double]$HueBlend = 0.55
 )
 
@@ -21,6 +25,19 @@ $BrandHue = 255.0                      # midpoint of --volt-deep (251) and --vol
 $imgDir   = Join-Path $Root 'assets\img'
 $source   = Join-Path $imgDir 'favicon-source.png'
 if (-not (Test-Path $source)) { throw "Source art not found: $source" }
+
+# Read the ground colour from the stylesheet rather than repeating it here, so a brand
+# recolour cannot leave the icon quietly stale - the same reason --volt-rgb is defined
+# once. The regex needs the colon straight after `ink`, so --ink-raised, --ink-line and
+# --ink-70 do not match. Falls back to the committed value if the parse finds nothing,
+# so the tool still runs against an unexpected stylesheet.
+$cssPath = Join-Path $Root 'assets\css\style.css'
+$Ink = '#0a0a0e'
+if (Test-Path $cssPath) {
+  $css = Get-Content $cssPath -Raw
+  if ($css -match '--ink:\s*(#[0-9a-fA-F]{6})') { $Ink = $Matches[1] }
+  else { Write-Warning "Could not read --ink from style.css; falling back to $Ink" }
+}
 
 # --- resampling -----------------------------------------------------------
 # Halve repeatedly before the final step. Going from 2505px to 32px in one bicubic jump
@@ -79,6 +96,9 @@ function Recolour-Disc($bmp, $blend) {
 
   $rect = New-Object System.Drawing.Rectangle 0, 0, $out.Width, $out.Height
   $data = $out.LockBits($rect, [System.Drawing.Imaging.ImageLockMode]::ReadWrite, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+  # try/finally so a throw part-way through the quarter-million iterations below cannot
+  # leave the bitmap locked, which turns a simple failure into a confusing one.
+  try {
   $n = [Math]::Abs($data.Stride) * $out.Height
   $buf = New-Object byte[] $n
   [System.Runtime.InteropServices.Marshal]::Copy($data.Scan0, $buf, 0, $n)
@@ -97,7 +117,13 @@ function Recolour-Disc($bmp, $blend) {
          elseif ($mx -eq $gg) { (($bb - $rr) / $dl) + 2.0 }
          else { (($rr - $gg) / $dl) + 4.0 }
     $h = (($h * 60.0) + 360.0) % 360.0
-    $h = ($BrandHue + ($h - $BrandHue) * (1.0 - $blend) + 360.0) % 360.0
+    # Shortest arc. Hue is circular, so interpolating it linearly can travel the long way
+    # round and pass through hues present in neither the source nor the target - a warm
+    # pixel would blend toward violet by way of green. For anything within 180 degrees of
+    # the target this is the same expression as a linear blend, so it leaves the current
+    # art untouched; it only stops the function being wrong for future art.
+    $delta = (($BrandHue - $h + 540.0) % 360.0) - 180.0
+    $h = ($h + $delta * $blend + 360.0) % 360.0
 
     $cc = (1.0 - [Math]::Abs(2.0 * $l - 1.0)) * $s
     $hp = $h / 60.0
@@ -117,7 +143,9 @@ function Recolour-Disc($bmp, $blend) {
   }
 
   [System.Runtime.InteropServices.Marshal]::Copy($buf, 0, $data.Scan0, $n)
-  $out.UnlockBits($data)
+  } finally {
+    $out.UnlockBits($data)
+  }
   return $out
 }
 
@@ -144,7 +172,7 @@ $S = 180
 $touchPath = Join-Path $imgDir 'apple-touch-icon.png'
 $touch = New-Object System.Drawing.Bitmap $S, $S, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $g = [System.Drawing.Graphics]::FromImage($touch)
-$g.Clear([System.Drawing.ColorTranslator]::FromHtml('#0a0a0e'))   # --ink
+$g.Clear([System.Drawing.ColorTranslator]::FromHtml($Ink))   # --ink, read from style.css
 $g.InterpolationMode = 'HighQualityBicubic'
 $g.PixelOffsetMode = 'HighQuality'
 $g.SmoothingMode = 'AntiAlias'

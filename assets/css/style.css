@@ -942,6 +942,25 @@ footer{
   .wrap{padding:0 20px;}
   section{padding:80px 0;}
 }
+/* Third fallback, this one for short viewports rather than narrow ones. The panel is a
+   fixed 100dvh with overflow:hidden, and the copy block reaches 371px once the headline
+   hits its 3rem ceiling, so under a short window the CTA is clipped with no way to scroll
+   to it - measured losing 5px at 950x330.
+
+   min-height:100dvh is not the fix. .reveal's height is the overlap plus the panel's
+   height, and a panel taller than 100dvh moves the release off act one's exit.
+
+   380px cannot match a viewport the curtain currently works at. margin-top resets
+   alongside height here too. */
+@media (max-height:380px){
+  .reveal{height:auto; margin-top:0; scroll-margin-top:0;}
+  .actbreak{
+    position:static;
+    height:auto;
+    display:block;
+    padding:64px 0;
+  }
+}
 @media (max-width:520px){
   .value-grid{grid-template-columns:1fr;}
   .footer-top{grid-template-columns:1fr;}

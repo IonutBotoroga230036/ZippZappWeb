@@ -93,3 +93,20 @@ Everything on the page must be true. The v3 prototype shipped invented traction 
 - `pack-black.png` / `pack-white.png` are the earlier stand-ins and are now referenced nowhere in HTML, CSS or JS. They are kept as files only; delete or reinstate deliberately rather than reaching for them by habit.
 - The partner form has no backend and says so on the page.
 - Every "Get the app" CTA anchors to `#download` in the footer — there are no real store links yet.
+
+### Assumed-good, never actually tested
+
+Two behaviours are load-bearing and have only ever been measured in the preview pane's
+Chromium. Both are assumed to work; neither has been confirmed where it matters. **Check
+these on real browsers and a real device before launch.**
+
+- **`.reveal`'s negative `scroll-margin-top`.** Valid per spec, and measured landing the
+  "For venues" jump on 3441 exactly where it should. But if Safari or Firefox clamps a
+  negative `scroll-margin` to zero, the link lands a full screen early, back where act one
+  still fills the viewport — the same silent no-op the anchor had before, in a different
+  disguise. Test by clicking "For venues" in each browser and confirming the venue panel
+  is fully uncovered on arrival.
+- **`apple-touch-icon.png` on an actual iPhone home screen.** It is fully opaque with
+  `#0A0A0E` corners specifically because iOS composites transparency to black rather than
+  to the wallpaper. That behaviour is the reason the file has a ground at all, and it has
+  only been reasoned about, never seen. Add the site to a home screen and look at it.
