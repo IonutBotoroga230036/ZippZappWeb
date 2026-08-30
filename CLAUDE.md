@@ -23,6 +23,7 @@ assets/img/           logo PNGs + the two product renders (.webp) the page uses;
                       pack-black.png / pack-white.png are superseded and unreferenced
 versions/             version_1/2/3.html — original prototypes, archived reference only
 tools/serve.ps1       local static server
+tools/make-icons.ps1  regenerates both icons from favicon-source.png
 ```
 
 ## Running it
