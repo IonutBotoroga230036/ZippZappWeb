@@ -18,9 +18,12 @@ assets/js/tilt.js     initTilt(); pointer-driven 3D tilt on every [data-tilt]
 assets/js/main.js     FAQ accordion, partner form, mobile nav
 assets/fonts/         NIKEA.woff2 (used) + NIKEA.otf (source)
 assets/img/           logo PNGs + the two product renders (.webp) the page uses;
+                      favicon-32.png + apple-touch-icon.png, both generated from
+                      favicon-source.png, kept as source art the way NIKEA.otf is;
                       pack-black.png / pack-white.png are superseded and unreferenced
 versions/             version_1/2/3.html — original prototypes, archived reference only
 tools/serve.ps1       local static server
+tools/make-icons.ps1  regenerates both icons from favicon-source.png
 ```
 
 ## Running it
